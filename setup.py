@@ -9,5 +9,9 @@ setup(
     author_email = 'me@adamgeorgiou.com',
     description = ('Utility to grok concerts'),
     packages=find_packages('src'),
-    package_dir = {'':'src'}
+    package_dir = {'':'src'},
+    install_requires = [
+        'requests',
+        'scrapy'
+        ],
 )
