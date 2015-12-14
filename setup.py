@@ -11,7 +11,8 @@ setup(
     packages=find_packages('src'),
     package_dir = {'':'src'},
     install_requires = [
-        'requests',
-        'scrapy'
+        'pytz',     # timezones
+        'requests', # nice http requests
+        'scrapy',   # html scraping
         ],
 )

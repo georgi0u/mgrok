@@ -7,15 +7,9 @@ into a single output file.
 
 import json
 import os
-import requests
 import sys
+from datetime import date, datetime, timedelta
 
-from datetime import date, timedelta
-
-from scrapy.crawler import CrawlerProcess
-from scrapy.settings import Settings
-
-from mgrok.pipelines.json_pipeline import JsonWriterPipeline
 from mgrok.scrapers import (
     BoweryBallroomSpider,
     MercuryLoungeSpider,
@@ -25,6 +19,11 @@ from mgrok.scrapers import (
     HighlineBallroomSpider,
     WarsawSpider
     )
+import pytz
+import requests
+from scrapy.crawler import CrawlerProcess
+from scrapy.settings import Settings
+
 
 TICKETFLY_DAYS_AHEAD = 3 * 31
 
@@ -57,6 +56,9 @@ def get_scraped_sites_data():
         def __deepcopy__(self, memo):
             return self
 
+    # Hack: we pass a dictionary which can't be deep-copied into the settings
+    # so as to _return_ the scraper output. As far as I can tell, this is the
+    # only way to return the scraper output to the script itself.
     output = RefDict()
 
     settings = Settings({
@@ -80,63 +82,83 @@ def get_api_sites_data():
     """
     Returns output for venues which provide api access.
     """
-    list_event_endpoint = os.path.join(TICKETFLY_API_BASE_URL, "events/list")
-    fromDate = date.today().strftime("%Y-%m-%d 00:00:00"),
-    thruDate = (
-        date.today() +
-        timedelta(TICKETFLY_DAYS_AHEAD)).strftime("%Y-%m-%d 23:59:59")
+    def make_request(page_num=1):
+        """
+        Returns the response from querying the ticketfly api.
+        """
+        list_event_endpoint = os.path.join(
+            TICKETFLY_API_BASE_URL, "events/list")
+        from_date = date.today().strftime("%Y-%m-%d 00:00:00"),
+        thru_date = (
+            date.today() +
+            timedelta(TICKETFLY_DAYS_AHEAD)).strftime("%Y-%m-%d 23:59:59")
+        request_params = {
+            'maxResults': 1000,
+            'venueId': ','.join(TICKETFLY_API_VENUES.values()),
+            'fromDate': from_date,
+            'thruDate': thru_date,
+            'pageNum': page_num,
+            }
 
-    request_params = {
-        'maxResults': 1000,
-        'venueId': ','.join(TICKETFLY_API_VENUES.values()),
-        'fromDate': fromDate,
-        'thruDate': thruDate,
-        }
-    response = requests.get(list_event_endpoint, params=request_params)
+        return requests.get(list_event_endpoint, params=request_params)
 
-    currentPage = response.json()['pageNum']
-    totalPages = response.json()['totalPages']
+    def filter_events(events):
+        """
+        Filter API-returned event objects into more concise application-specific
+        event objects
+        """
+        filtered_events = {}
+        for event in events:
+            artists = []
+            for headliner in event['headliners']:
+                artists.append(headliner['name'])
+            for supporter in event['supports']:
+                artists.append(supporter['name'])
+            venue_name = event['venue']['name']
+
+            time_zone = pytz.timezone(event['venue']['timeZone'])
+            event_date = time_zone.localize(
+                datetime.strptime(event['startDate'], '%Y-%m-%d %H:%M:%S'))
+            url = event['ticketPurchaseUrl']
+
+            if venue_name not in filtered_events:
+                filtered_events[venue_name] = []
+
+            filtered_events[venue_name].append({
+                'artists': artists,
+                'venue_name': venue_name,
+                'date': event_date.isoformat(),
+                'event_link': url
+                })
+
+        return filtered_events
+
+    # Collect all event data
+    response = make_request()
     events = []
-    while(True):
+    current_page = response.json()['pageNum']
+    total_pages = response.json()['totalPages']
+    while True:
         events.extend(response.json()['events'])
-        nextPage = currentPage + 1
-        if nextPage > totalPages:
+        next_page = current_page + 1
+        if next_page > total_pages:
             break
-        request_params.update({'pageNum': nextPage})
-        response = requests.get(list_event_endpoint, params=request_params)
-        currentPage = nextPage
+        response = make_request(next_page)
+        current_page = next_page
 
-    filtered_response = {}
-    for event in events:
-        artists = []
-        for headliner in event['headliners']:
-            artists.append(headliner['name'])
-        for supporter in event['supports']:
-            artists.append(supporter['name'])
-        venue_name = event['venue']['name']
-        event_date = event['startDate']
-        url = event['ticketPurchaseUrl']
-
-        if venue_name not in filtered_response:
-            filtered_response[venue_name] = []
-
-        filtered_response[venue_name].append({
-            'artists': artists,
-            'venue_name': venue_name,
-            'date': event_date,
-            'event_link': url
-            })
-
-    return filtered_response
+    return filter_events(events)
 
 
 def main():
+    """
+    Collects event data from various sources, aggregates said data in a single
+    object, and prints that object
+    """
+    # add rockwood, drom
     shows = {}
     shows.update(get_scraped_sites_data())
     shows.update(get_api_sites_data())
-
-    print json.dumps(shows, indent=2)
-
+    print json.dumps(shows)
 
 if __name__ == '__main__':
     sys.exit(main())
