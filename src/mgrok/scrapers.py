@@ -54,24 +54,33 @@ class _BoweryPresentsSpider(scrapy.Spider):
         }
 
 class _TicketWebSpider(scrapy.Spider):
-    """
-    Base class spider for ticketweb formatted venue websites
-    """
+    """Base class spider for ticketweb formatted venue websites"""
+
+    EVENT_URL_FORMAT = (
+        'http://www.ticketweb.com/t3/sale/SaleEventDetail'
+        '?dispatch=loadSelectionData&eventId=')
+
     def parse(self, response):
-        selector = '#LIST_VIEW .event-col .name a::attr(href)'
+        selector = '.event-list .media-body .event-name a::attr(href)'
         for event_link in response.css(selector):
-            full_url = response.urljoin(event_link.extract())
+            # The link has angular template garbage in it, so we generate our
+            # own link to the event
+            match = re.search(r'eventId=(\d+)', event_link.extract())
+            full_url = response.urljoin(self.EVENT_URL_FORMAT + match.group(1))
             yield scrapy.Request(full_url, callback=self._parse_event)
 
     def _parse_event(self, response):
-        artists = (response
-                   .css('.artist-text .highlight span')
-                   .xpath('./text()').extract())
+        artists = (
+            response
+            .css('.artist-text .highlight span')
+            .xpath('./text()')
+            .extract())
         date_text = (
-            response.css('.artist-text p')
-            .xpath('./text()[count(preceding-sibling::br) < 1]').extract()[0]
+            response
+            .css('#edp-artist-Col .artist-text p')
+            .xpath('./text()')
+            .extract()[0]
             .strip())
-
         match = re.match(
             r'^'
             r'(?P<day_of_week>\w+), '
@@ -82,7 +91,6 @@ class _TicketWebSpider(scrapy.Spider):
             r'(?P<minute>\d+) '
             r'(?P<am_pm>[AP]M) '
             r'(?P<timezone>\w+)', date_text)
-
         timezone = pytz.timezone('US/Eastern')
         the_datetime = timezone.localize(
             datetime.strptime(
@@ -126,5 +134,5 @@ class HighlineBallroomSpider(_TicketWebSpider):
 class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
     start_urls = [
-        'http://www.ticketweb.com/snl/VenueListings.action?venueId=22869&pl='
+        'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869?pl='
         ]

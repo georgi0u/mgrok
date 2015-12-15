@@ -1,11 +1,7 @@
-"""
-Pipelines for extracting data from venue-scraping scrapy spiders
-"""
+"""Pipelines for extracting data from venue-scraping scrapy spiders"""
 
 class JsonWriterPipeline(object):
-    """
-    JSON extracting scraper pipeline
-    """
+    """JSON extracting spider pipeline"""
     def __init__(self, items):
         self.items_ = items
 
@@ -14,9 +10,7 @@ class JsonWriterPipeline(object):
         return cls(settings['PIPELINE_OUTPUT'])
 
     def process_item(self, item, scraper):
-        """
-        Adds items to the output dictionary.
-        """
+        """Adds items to the output dictionary."""
         if item['venue_name'] not in self.items_:
             self.items_[item['venue_name']] = []
         self.items_[item['venue_name']].append(dict(item))

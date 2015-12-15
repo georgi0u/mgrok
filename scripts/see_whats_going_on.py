@@ -24,7 +24,6 @@ import requests
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 
-
 TICKETFLY_DAYS_AHEAD = 3 * 31
 
 TICKETFLY_API_BASE_URL = 'http://www.ticketfly.com/api'
@@ -35,8 +34,10 @@ TICKETFLY_API_VENUES = {
     }
 
 SCRAPY_SPIDERS = [
+    # Ticketfly
     WarsawSpider,
     HighlineBallroomSpider,
+    # Bowery
     BoweryBallroomSpider,
     MercuryLoungeSpider,
     MusicHallOfWilliamsburgSpider,
@@ -44,15 +45,10 @@ SCRAPY_SPIDERS = [
     TerminalFiveSpider,
     ]
 
-
 def get_scraped_sites_data():
-    """
-    Returns output for venues which need to be scraped.
-    """
+    """Returns output for venues which need to be scraped."""
     class RefDict(dict):
-        """
-        A dictionary which returns a reference to itself when deepcopied.
-        """
+        """A dictionary which returns a reference to itself when deepcopied."""
         def __deepcopy__(self, memo):
             return self
 
@@ -64,9 +60,10 @@ def get_scraped_sites_data():
     settings = Settings({
         'LOG_ENABLED': False,
         'ITEM_PIPELINES': {
-            'mgrok.pipelines.json_pipeline.JsonWriterPipeline': 1
+            'mgrok.pipelines.JsonWriterPipeline': 1
             },
-        'PIPELINE_OUTPUT': output
+        'PIPELINE_OUTPUT': output,
+        'USER_AGENT': 'Chrome/41.0.2228.0'
         })
 
     crawler_process = CrawlerProcess(settings)
@@ -79,13 +76,10 @@ def get_scraped_sites_data():
 
 
 def get_api_sites_data():
-    """
-    Returns output for venues which provide api access.
-    """
+    """Returns output for venues which provide api access."""
+
     def make_request(page_num=1):
-        """
-        Returns the response from querying the ticketfly api.
-        """
+        """Returns the response from querying the ticketfly api."""
         list_event_endpoint = os.path.join(
             TICKETFLY_API_BASE_URL, "events/list")
         from_date = date.today().strftime("%Y-%m-%d 00:00:00"),
