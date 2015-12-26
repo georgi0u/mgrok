@@ -32,3 +32,7 @@ var/
 [Ll]ocal
 pyvenv.cfg
 pip-selfcheck.json
+
+
+# Project Specific
+the_raw_list.js
