@@ -11,8 +11,9 @@ setup(
     packages=find_packages('src'),
     package_dir = {'':'src'},
     install_requires = [
-        'pytz',     # timezones
-        'requests', # nice http requests
-        'scrapy',   # html scraping
+        'python-dateutil', # iso (+timezone) date parse
+        'pytz',            # timezones
+        'requests',        # nice http requests
+        'scrapy',          # html scraping
         ],
 )

@@ -1,0 +1,118 @@
+/** Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+/** The George List */
+main#main-container {
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  margin: auto;
+  max-width: 500px;
+
+  h1, h2 {
+    display: inline-block;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  h2 {
+    font-size: 24px;
+    color: #ff0066;
+  }
+
+  header {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  ul#list-of-venues {
+    text-transform: lowercase;
+    .venue {
+      padding-bottom: 45px;      
+    }
+
+    h2 {
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .event {
+      &.nothing-happening {
+        font-style: italic;
+      }
+      &:last-child {
+        padding-bottom: 0;
+      }
+
+      .datetime {
+        padding-bottom: 10px;
+      }
+      
+      * {
+        &:last-child {
+          padding-bottom: 0;
+        }
+        padding-bottom: 5px;
+
+      }
+
+      padding-bottom: 25px;
+    }
+
+    .event-artists {
+      font-weight: bold;
+    }
+
+    .artist {
+      display: inline;
+      &::after { 
+        content: ", ";
+      }
+      &:last-child::after { 
+        content: "";
+      }
+    }
+  }
+}

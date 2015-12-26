@@ -128,11 +128,11 @@ class RoughTradeSpider(_BoweryPresentsSpider):
 class HighlineBallroomSpider(_TicketWebSpider):
     name = "Highline Ballroom"
     start_urls = [
-        'http://www.ticketweb.com/snl/VenueListings.action?venueId=19776&pl='
+        'http://www.ticketweb.com/venue/highline-ballroom-new-york-ny/19776'
         ]
 
 class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
     start_urls = [
-        'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869?pl='
+        'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869'
         ]

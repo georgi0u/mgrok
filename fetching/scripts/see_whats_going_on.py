@@ -9,6 +9,7 @@ import json
 import os
 import sys
 from datetime import date, datetime, timedelta
+from operator import attrgetter
 
 from mgrok.scrapers import (
     BoweryBallroomSpider,
@@ -19,6 +20,7 @@ from mgrok.scrapers import (
     HighlineBallroomSpider,
     WarsawSpider
     )
+from dateutil.parser import parse as parse_date_str
 import pytz
 import requests
 from scrapy.crawler import CrawlerProcess
@@ -34,7 +36,6 @@ TICKETFLY_API_VENUES = {
     }
 
 SCRAPY_SPIDERS = [
-    # Ticketfly
     WarsawSpider,
     HighlineBallroomSpider,
     # Bowery
@@ -148,10 +149,21 @@ def main():
     Collects event data from various sources, aggregates said data in a single
     object, and prints that object
     """
-    # add rockwood, drom
+    # TODO add rockwood, drom
     shows = {}
+
+    # Collect shows
     shows.update(get_scraped_sites_data())
     shows.update(get_api_sites_data())
+
+    # Sort shows
+    def key_function(event):
+      date_str = event['date']
+      return parse_date_str(date_str)
+    for venue, events in shows.iteritems():
+      events.sort(key=key_function)
+
+    # Print shows
     print json.dumps(shows)
 
 if __name__ == '__main__':
