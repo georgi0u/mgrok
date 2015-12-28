@@ -24,8 +24,8 @@
     <main id="main-container">
       <header>
         <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
-        <h2 ng-if="error">{{error}}</h2>
-        <nav ng-if="!error">
+        <h2 data-ng-if="error">{{error}}</h2>
+        <nav data-ng-if="!error">
           <ul id="navigation-links" >
             <li data-ng-click="theListController.showToday(0)"
                 data-ng-class="{selected: selectedLink == 0}">today</li>
