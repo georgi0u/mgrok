@@ -26,6 +26,8 @@ import requests
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 
+TICKETFLY_DAYS_BEHIND = 7
+
 TICKETFLY_DAYS_AHEAD = 3 * 31
 
 TICKETFLY_API_BASE_URL = 'http://www.ticketfly.com/api'
@@ -33,6 +35,11 @@ TICKETFLY_API_BASE_URL = 'http://www.ticketfly.com/api'
 TICKETFLY_API_VENUES = {
     'Brooklyn Bowl': '1',
     'Capitol Theatre': '4725'
+    }
+
+TICKETFLY_API_ORGS = {
+    'Brooklyn Bowl': '3',
+    'Capitol Theatre': '767'
     }
 
 SCRAPY_SPIDERS = [
@@ -83,13 +90,16 @@ def get_api_sites_data():
         """Returns the response from querying the ticketfly api."""
         list_event_endpoint = os.path.join(
             TICKETFLY_API_BASE_URL, "events/list")
-        from_date = date.today().strftime("%Y-%m-%d 00:00:00"),
+        from_date = (
+            date.today() -
+            timedelta(TICKETFLY_DAYS_BEHIND)).strftime("%Y-%m-%d 00:00:00")
         thru_date = (
             date.today() +
             timedelta(TICKETFLY_DAYS_AHEAD)).strftime("%Y-%m-%d 23:59:59")
         request_params = {
             'maxResults': 1000,
             'venueId': ','.join(TICKETFLY_API_VENUES.values()),
+            'orgId': ','.join(TICKETFLY_API_ORGS.values()),
             'fromDate': from_date,
             'thruDate': thru_date,
             'pageNum': page_num,
@@ -158,10 +168,10 @@ def main():
 
     # Sort shows
     def key_function(event):
-      date_str = event['date']
-      return parse_date_str(date_str)
+        date_str = event['date']
+        return parse_date_str(date_str)
     for venue, events in shows.iteritems():
-      events.sort(key=key_function)
+        events.sort(key=key_function)
 
     # Print shows
     print json.dumps(shows)
