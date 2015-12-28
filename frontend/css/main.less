@@ -1,50 +1,9 @@
 /** Reset */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block;
-}
-body {
-  line-height: 1;
-}
-ol, ul {
-  list-style: none;
-}
-blockquote, q {
-  quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block;}body{line-height:1;}ol,ul{list-style:none;}blockquote,q{quotes:none;}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none;}table{border-collapse:collapse;border-spacing:0;}a,a:active,a:hover,a:visited,a:link{text-decoration:none;color:inherit;}
 
 
 /** The George List */
-main#main-container {
+main {
   font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
   margin: auto;
   max-width: 500px;
@@ -63,55 +22,78 @@ main#main-container {
   }
 
   header {
+    text-align: center; 
     padding-top: 30px;
     padding-bottom: 30px;
+    nav {
+      padding-top:15px;
+      li {
+        display: inline-block;
+        padding: 10px;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 
   ul#list-of-venues {
     text-transform: lowercase;
     .venue {
-      padding-bottom: 45px;      
+      padding-bottom: 40px;
     }
 
     h2 {
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
     }
 
     .event {
+      padding-left: 12px; 
+      padding-right: 12px; 
+      margin-left: -12px;
+      margin-bottom: 5px; 
+
+      & > * {
+        display: block;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      &.contains_link:hover {
+        background: #ccfff5;
+      }
+      &.does_not_contain_link:hover .message {
+        display: block;
+      }
+      &.does_not_contain_link:hover .event-artists {
+        visibility: hidden;
+      }
       &.nothing-happening {
         font-style: italic;
       }
-      &:last-child {
-        padding-bottom: 0;
-      }
-
       .datetime {
+        font-weight: bold;
         padding-bottom: 10px;
       }
-      
-      * {
-        &:last-child {
-          padding-bottom: 0;
+      .event-artists {       
+        .artist {
+          display: inline;
+          &::after { 
+            content: ", ";
+          }
+          &:last-child::after { 
+            content: "";
+          }
         }
-        padding-bottom: 5px;
-
       }
-
-      padding-bottom: 25px;
-    }
-
-    .event-artists {
-      font-weight: bold;
-    }
-
-    .artist {
-      display: inline;
-      &::after { 
-        content: ", ";
-      }
-      &:last-child::after { 
-        content: "";
+      .message {
+        position: absolute;
+        top: 0;
+        text-align: center;
+        color: red;
+        font-style: italic;
+        display: none;
       }
     }
   }

@@ -1,5 +1,7 @@
 (function() {
-  var georgesListApp = angular.module('GeorgesListApp', []);
+  /////////////
+  // Helpers //
+  /////////////
 
   var zeroOutTime = function(date) {
     date.setHours(0);
@@ -9,8 +11,15 @@
     return date;
   };
 
-  var TheListController = function($scope, $http) {
+
+  /////////////////
+  // Controllers //
+  /////////////////
+
+  var TheListController = function($scope, $http, $filter) {
+    var self = this;
     this.$scope = $scope;
+    this.$filter = $filter;
 
     // Get Venue Data
     $http.get("/js/the_raw_list.js").then(
@@ -21,9 +30,9 @@
 
         // Add sorted venue names to the scope
         var venueNames = [];
-        for (index in data) {
-          venueNames.push(index);
-        }
+        angular.forEach(data, function(events, venueName) {
+          venueNames.push(venueName);
+        });
         venueNames.sort(function (a, b) {
           a = a.toLowerCase().replace(/^the /, '');
           b = b.toLowerCase().replace(/^the /, '');
@@ -33,23 +42,33 @@
 
         // Add a convenience array of the events to the scope
         $scope['eventList'] = [];
-        for (index in $scope['venueData']) {
-          var events = $scope['venueData'][index];
+        angular.forEach($scope['venueData'], function(events, venueName) {
           $scope['eventList'] = $scope['eventList'].concat(events);
-        }
-        $scope['eventList'].forEach(function(event) {
-          event.show = true;
         });
+        self.showToday();
       },
       function(response) {
         $scope['error'] = 'Something is messed up. Sorry.';
       });
+
+    $scope['navLinks'] = [
+      ['today', this.showToday.bind(this)],
+      ['next', this.showNext.bind(this)],
+      ['this weekend', this.showWeekend.bind(this)],
+      ['show me everything', this.showEverything.bind(this)],
+    ];
   };
+
+  TheListController.prototype.defaultDateFilter = function(date) {
+    return this.$filter('date')(date, 'EEE, MMM d @ h:mm a');
+  };
+
 
   TheListController.prototype.getEventsToShow = function(venueName) {
     var events = this.$scope['venueData'][venueName];
     return events.filter(function(event) { return event.show; });
   };
+
 
   TheListController.prototype.showToday = function() {
     var today = zeroOutTime(new Date());
@@ -57,7 +76,12 @@
       var eventDate = zeroOutTime(new Date(event.date));
       event.show = (eventDate.getTime() == today.getTime());
     });
+    var self = this;
+    this.$scope['filterDate'] = function(date) {
+      return self.$filter('date')(date, 'h:mm a');
+    };
   };
+
 
   TheListController.prototype.showNext = function() {
     this.$scope['venueNames'].forEach(function(venueName) {
@@ -67,23 +91,79 @@
       });
       events[0].show = true;
     }, this);
+    this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
   };
+
 
   TheListController.prototype.showEverything = function() {
     this.$scope['eventList'].forEach(function(event) {
       event.show = true;
     });
+    this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
   };
+
 
   TheListController.prototype.showWeekend = function() {
     var today = zeroOutTime(new Date());
-    var dayOfWeek = today.getDay();
+    var daysToThursday = 4 - today.getDay();
+    var thursdayDate = new Date(today);
+    thursdayDate.setDate(today.getDate() + daysToThursday);
+    var daysToSaturday = 6 - today.getDay();
+    var sundayDate = new Date(today);
+    sundayDate.setDate(today.getDate() + daysToSaturday + 1);
+    sundayDate.setHours(23);
+    sundayDate.setMinutes(59);
+    sundayDate.setSeconds(59);
 
     this.$scope['eventList'].forEach(function(event) {
-      event.show = true;
+      var eventDate = new Date(event.date);
+      event.show = (
+          eventDate.getTime() >= thursdayDate.getTime()
+          && eventDate.getTime() <= sundayDate.getTime());
     });
+
+    var self = this;
+    this.$scope['filterDate'] = function(date) {
+      return self.$filter('date')(date, 'EEEE @ h:mm a');
+    };
   };
 
-  georgesListApp.controller('TheListController', TheListController);
+  TheListController.prototype.getEventClass = function(event) {
+    var contains_link = (event.event_link && event.event_link != '');
+    return {
+      contains_link: contains_link,
+      does_not_contain_link: !contains_link
+    };
+  };
 
+
+  ////////////////
+  // Directives //
+  ////////////////
+  var eventTitleTemplate =
+    '  <h3 class="datetime"'+
+    '      title="{{theListController.defaultDateFilter(event.date)}}">{{filterDate(event.date)}}</h3>' +
+    '  <div style="position: relative">' +
+    '    <ul class="event-artists">' +
+    '      <li class="artist" data-ng-repeat="artist in event.artists">{{artist}}</li>' +
+    '    </ul>' +
+    '    <p class="message" data-ng-transclude></p>' +
+    '  </div>';
+
+  var eventTitleDirective = function() {
+    return {
+      template: eventTitleTemplate,
+      transclude: true
+    };
+  };
+
+
+  ///////////////////
+  // Angular Setup //
+  ///////////////////
+
+  angular
+    .module('GeorgesListApp', [])
+    .controller('TheListController', TheListController)
+    .directive('eventTitle', eventTitleDirective);
 }());
