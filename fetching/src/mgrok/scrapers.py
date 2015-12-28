@@ -91,11 +91,12 @@ class _TicketWebSpider(scrapy.Spider):
             r'(?P<minute>\d+) '
             r'(?P<am_pm>[AP]M) '
             r'(?P<timezone>\w+)', date_text)
+        no_tz_date_str = date_text[0:match.end('am_pm')].strip()
         timezone = pytz.timezone('US/Eastern')
         the_datetime = timezone.localize(
             datetime.strptime(
-                match.group(0),
-                '%A, %b %d, %Y %I:%M %p %Z'),
+                no_tz_date_str,
+                '%A, %b %d, %Y %I:%M %p'),
             match.group('timezone') == 'EDT')
 
         yield {
