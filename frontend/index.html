@@ -17,8 +17,14 @@
         <h2 ng-if="error">{{error}}</h2>
         <nav ng-if="!error">
           <ul id="navigation-links" >
-            <li data-ng-repeat="navTuple in navLinks"
-                data-ng-click="navTuple[1]()">{{navTuple[0]}}</li>
+            <li data-ng-click="theListController.showToday(0)"
+                data-ng-class="{selected: selectedLink == 0}">today</li>
+            <li data-ng-click="theListController.showNext(1)"
+                data-ng-class="{selected: selectedLink == 1}">next</li>
+            <li data-ng-click="theListController.showWeekend(2)"
+                data-ng-class="{selected: selectedLink == 2}">this weekend</li>
+            <li data-ng-click="theListController.showEverything(3)"
+                data-ng-class="{selected: selectedLink == 3}">show me everything</li>
           </ul>
         </nav>
       </header>

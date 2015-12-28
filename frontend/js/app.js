@@ -48,18 +48,11 @@
         angular.forEach($scope['venueData'], function(events, venueName) {
           $scope['eventList'] = $scope['eventList'].concat(events);
         });
-        self.showToday();
+        self.showToday(0);
       },
       function(response) {
         $scope['error'] = 'Something is messed up. Sorry.';
       });
-
-    $scope['navLinks'] = [
-      ['today', this.showToday.bind(this)],
-      ['next', this.showNext.bind(this)],
-      ['this weekend', this.showWeekend.bind(this)],
-      ['show me everything', this.showEverything.bind(this)],
-    ];
   };
 
   TheListController.prototype.defaultDateFilter = function(date) {
@@ -73,7 +66,7 @@
   };
 
 
-  TheListController.prototype.showToday = function() {
+  TheListController.prototype.showToday = function(index) {
     var today = zeroOutTime(new Date());
     this.$scope['eventList'].forEach(function(event) {
       var eventDate = zeroOutTime(new Date(event.date));
@@ -83,10 +76,11 @@
     this.$scope['filterDate'] = function(date) {
       return self.$filter('date')(date, 'h:mm a');
     };
+    this.$scope['selectedLink'] = index;
   };
 
 
-  TheListController.prototype.showNext = function() {
+  TheListController.prototype.showNext = function(index) {
     this.$scope['venueNames'].forEach(function(venueName) {
       var events = this.$scope['venueData'][venueName];
       events.forEach(function(event) {
@@ -95,18 +89,20 @@
       events[0].show = true;
     }, this);
     this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
+    this.$scope['selectedLink'] = index;
   };
 
 
-  TheListController.prototype.showEverything = function() {
+  TheListController.prototype.showEverything = function(index) {
     this.$scope['eventList'].forEach(function(event) {
       event.show = true;
     });
     this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
+    this.$scope['selectedLink'] = index;
   };
 
 
-  TheListController.prototype.showWeekend = function() {
+  TheListController.prototype.showWeekend = function(index) {
     var today = zeroOutTime(new Date());
     var daysToThursday = 4 - today.getDay();
     var thursdayDate = new Date(today);
@@ -129,6 +125,7 @@
     this.$scope['filterDate'] = function(date) {
       return self.$filter('date')(date, 'EEEE @ h:mm a');
     };
+    this.$scope['selectedLink'] = index;
   };
 
   TheListController.prototype.getEventClass = function(event) {
