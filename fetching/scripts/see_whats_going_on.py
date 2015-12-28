@@ -5,6 +5,8 @@ A script for collecting data about various shows going on and aggregating them
 into a single output file.
 """
 
+from datetime import datetime
+import argparse
 import json
 import sys
 
@@ -22,6 +24,7 @@ from mgrok.ticketfly_api import (
     CapitolTheatreApi
     )
 from dateutil.parser import parse as parse_date_str
+from pytz import timezone
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 
@@ -79,6 +82,11 @@ def main():
     Collects event data from various sources, aggregates said data in a single
     object, and prints that object
     """
+    parser = argparse.ArgumentParser(description='see whats playing in nyc.')
+    parser.add_argument('outfile', type=argparse.FileType('w'))
+
+    args = parser.parse_args()
+
     # TODO add rockwood, drom
     shows = {}
 
@@ -93,8 +101,13 @@ def main():
     for events in shows.values():
         events.sort(key=key_function)
 
+    output = {
+        "updated": datetime.now(timezone('US/Eastern')).isoformat(),
+        "shows": shows
+        }
+
     # Print shows
-    print json.dumps(shows)
+    args.outfile.write(json.dumps(output))
 
 if __name__ == '__main__':
     sys.exit(main())

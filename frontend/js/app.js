@@ -24,13 +24,16 @@
     // Get Venue Data
     $http.get("/js/the_raw_list.js").then(
       function(response) {
-        var data = response.data;
+        // Add updated date
+        $scope['lastUpdated'] = response.data.updated;
+
         // Add venue data to the scope
-        $scope['venueData'] = response.data;
+        var shows = response.data.shows;
+        $scope['venueData'] = shows;
 
         // Add sorted venue names to the scope
         var venueNames = [];
-        angular.forEach(data, function(events, venueName) {
+        angular.forEach(shows, function(events, venueName) {
           venueNames.push(venueName);
         });
         venueNames.sort(function (a, b) {
