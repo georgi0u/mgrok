@@ -74,7 +74,7 @@
     });
     var self = this;
     this.$scope['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'h:mm a');
+      return self.$filter('date')(date, 'EEEE @ h:mm a');
     };
     this.$scope['selectedLink'] = index;
   };
