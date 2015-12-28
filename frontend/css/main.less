@@ -78,13 +78,12 @@ main {
       }
       .event-artists {       
         .artist {
-          display: inline;
-          &::after { 
-            content: ", ";
-          }
-          &:last-child::after { 
-            content: "";
-          }
+          display: block;
+          padding-bottom: 5px;
+          text-indent: -15px;
+          padding-left: 15px;
+          line-height: 20px;
+
         }
       }
       .message {
