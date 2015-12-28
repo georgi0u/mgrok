@@ -1,3 +1,7 @@
 # mgrok
 
-a project for the grokking of concerts.
+a project for the grokking of concerts in NYC
+
+provides both (1) a script for fetching information about shows and (2) a frontend for displaying the fetched information.
+
+hosted at http://www.thegeorgelist.com
