@@ -113,7 +113,6 @@ main {
       &.contains_link {
         background: #eee;
       }
-
       &.does_not_contain_link:hover .message {
         display: block;
       }
@@ -122,6 +121,9 @@ main {
       }
       &.nothing-happening {
         font-style: italic;
+      }
+      &.past .datetime {
+        text-decoration: line-through;
       }
       .datetime {
         font-weight: bold;
