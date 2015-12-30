@@ -35,10 +35,10 @@
                   data-ng-class="{selected: selectedLink == 1}">tomorrow</li>
               <li data-ng-click="theListController.showNext(2)"
                   data-ng-class="{selected: selectedLink == 2}">next</li>
-              <li data-ng-click="theListController.showWeekend(3)"
-                  data-ng-class="{selected: selectedLink == 3}">this weekend</li>
-              <li data-ng-click="theListController.showWorkWeek(4)"
-                  data-ng-class="{selected: selectedLink == 4}">the work week</li>
+              <li data-ng-click="theListController.showWorkWeek(3)"
+                  data-ng-class="{selected: selectedLink == 3}">the work week</li>
+              <li data-ng-click="theListController.showWeekend(4)"
+                  data-ng-class="{selected: selectedLink == 4}">this weekend</li>
             </ul>
           </nav>
         </div>
@@ -61,7 +61,6 @@
                 </a>
                 <div data-event-title data-ng-if="!event.event_link || theListController.alreadyHappened(event)">
                   <p data-ng-if="!event.event_link">we couldn't find a link for this event.</p>
-                  <p data-ng-if="theListController.alreadyHappened(event)">this event already went down.</p>
                 </div>
               </li>
               <li class="event nothing-happening"
