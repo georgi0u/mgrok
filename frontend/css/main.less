@@ -101,17 +101,15 @@ main {
       padding-right: 12px; 
       margin-left: -12px;
       margin-bottom: 5px; 
+      background: #eee;
 
       & > * {
         display: block;
         padding-top: 12px;
         padding-bottom: 12px;
       }
-      &.contains_link:hover {
+      &:hover {
         background: #ddd;
-      }
-      &.contains_link {
-        background: #eee;
       }
       &.does_not_contain_link:hover .message {
         display: block;
@@ -121,9 +119,16 @@ main {
       }
       &.nothing-happening {
         font-style: italic;
+        background: none;
       }
-      &.past .datetime {
-        text-decoration: line-through;
+      &.past {
+        &:hover {
+          color: inherit;
+        }
+        color: #ccc;
+        .datetime {
+          text-decoration: line-through;
+        }
       }
       .datetime {
         font-weight: bold;

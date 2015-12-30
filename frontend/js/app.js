@@ -59,7 +59,6 @@
     var today = zeroOutTime(new Date());
     var eventDate = zeroOutTime(new Date(event.date));
     var eventInThePast = (eventDate.getTime() < today.getTime());
-
     return eventInThePast;
   };
 
@@ -186,12 +185,14 @@
 
 
   TheListController.prototype.getEventClass = function(event) {
-    var contains_link = (event.event_link && event.event_link != '');
+    var alreadyHappened = this.alreadyHappened(event);
+    var contains_link =
+        (event.event_link && event.event_link != '' && !alreadyHappened);
 
     return {
       contains_link: contains_link,
       does_not_contain_link: !contains_link,
-      past: this.alreadyHappened(event)
+      past: alreadyHappened
     };
   };
 

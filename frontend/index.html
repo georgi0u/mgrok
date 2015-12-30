@@ -55,13 +55,13 @@
                   data-ng-class="theListController.getEventClass(event)"
                   data-ng-repeat="event in theListController.getEventsToShow(venueName)">
                 <a data-event-title
-                   data-ng-if="event.event_link"
+                   data-ng-if="event.event_link && !theListController.alreadyHappened(event)"
                    data-ng-href="{{event.event_link}}"
                    target="_blank">
                 </a>
-                <div data-event-title
-                     data-ng-if="!event.event_link">
-                  we couldn't find a link for this event
+                <div data-event-title data-ng-if="!event.event_link || theListController.alreadyHappened(event)">
+                  <p data-ng-if="!event.event_link">we couldn't find a link for this event.</p>
+                  <p data-ng-if="theListController.alreadyHappened(event)">this event already went down.</p>
                 </div>
               </li>
               <li class="event nothing-happening"
