@@ -15,30 +15,33 @@
       ga('send', 'pageview');
     </script>
     <link rel="stylesheet/less" type="text/css" href="css/main.less" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
     <script src="js/less.min.js" type="text/javascript"></script>
     <script src="js/app.js"></script>
   </head>
-  
+
   <body data-ng-controller="TheListController as theListController">
     <main id="main-container">
-      <header>
-        <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
-        <h2 data-ng-if="error">{{error}}</h2>
-        <nav data-ng-if="!error">
-          <ul id="navigation-links" >
-            <li data-ng-click="theListController.showToday(0)"
-                data-ng-class="{selected: selectedLink == 0}">today</li>
-            <li data-ng-click="theListController.showTomorrow(1)"
-                data-ng-class="{selected: selectedLink == 1}">tomorrow</li>
-            <li data-ng-click="theListController.showNext(2)"
-                data-ng-class="{selected: selectedLink == 2}">next</li>
-            <li data-ng-click="theListController.showWeekend(3)"
-                data-ng-class="{selected: selectedLink == 3}">this weekend</li>
-            <li data-ng-click="theListController.showEverything(4)"
-                data-ng-class="{selected: selectedLink == 4}">show me everything</li>
-          </ul>
-        </nav>
+      <header id="header">
+        <div class="header-container">
+          <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
+          <h2 data-ng-if="error">{{error}}</h2>
+          <nav data-ng-if="!error">
+            <ul id="navigation-links" >
+              <li data-ng-click="theListController.showToday(0)"
+                  data-ng-class="{selected: selectedLink == 0}">today</li>
+              <li data-ng-click="theListController.showTomorrow(1)"
+                  data-ng-class="{selected: selectedLink == 1}">tomorrow</li>
+              <li data-ng-click="theListController.showNext(2)"
+                  data-ng-class="{selected: selectedLink == 2}">next</li>
+              <li data-ng-click="theListController.showWeekend(3)"
+                  data-ng-class="{selected: selectedLink == 3}">this weekend</li>
+              <li data-ng-click="theListController.showEverything(4)"
+                  data-ng-class="{selected: selectedLink == 4}">show me everything</li>
+            </ul>
+          </nav>
+        </div>
       </header>
 
       <ul id="list-of-venues">

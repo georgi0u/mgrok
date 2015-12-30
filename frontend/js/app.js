@@ -181,3 +181,13 @@
     .controller('TheListController', TheListController)
     .directive('eventTitle', eventTitleDirective);
 }());
+
+
+$(function() {
+  var headerSpacer = $('<div>');
+    headerSpacer.height($('#header').outerHeight(true));
+  headerSpacer.insertAfter($('#header'));
+
+  console.log($('#header').height());
+  console.log(headerSpacer);
+});
