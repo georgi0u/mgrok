@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="description" content="a simple, one-stop-shop for seeing what kind of good tunes are being played in new york city.">
     <meta name="keywords" content="music, live music, good tunes, new york city, nyc, brooklyn, manhattan">
-    <title>The George List</title>
+    <title>the george list | who's playing in nyc</title>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -29,12 +29,14 @@
           <ul id="navigation-links" >
             <li data-ng-click="theListController.showToday(0)"
                 data-ng-class="{selected: selectedLink == 0}">today</li>
-            <li data-ng-click="theListController.showNext(1)"
-                data-ng-class="{selected: selectedLink == 1}">next</li>
-            <li data-ng-click="theListController.showWeekend(2)"
-                data-ng-class="{selected: selectedLink == 2}">this weekend</li>
-            <li data-ng-click="theListController.showEverything(3)"
-                data-ng-class="{selected: selectedLink == 3}">show me everything</li>
+            <li data-ng-click="theListController.showTomorrow(1)"
+                data-ng-class="{selected: selectedLink == 1}">tomorrow</li>
+            <li data-ng-click="theListController.showNext(2)"
+                data-ng-class="{selected: selectedLink == 2}">next</li>
+            <li data-ng-click="theListController.showWeekend(3)"
+                data-ng-class="{selected: selectedLink == 3}">this weekend</li>
+            <li data-ng-click="theListController.showEverything(4)"
+                data-ng-class="{selected: selectedLink == 4}">show me everything</li>
           </ul>
         </nav>
       </header>

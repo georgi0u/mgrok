@@ -79,6 +79,20 @@
     this.$scope['selectedLink'] = index;
   };
 
+  TheListController.prototype.showTomorrow = function(index) {
+    var tomorrow = zeroOutTime(new Date());
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    this.$scope['eventList'].forEach(function(event) {
+      var eventDate = zeroOutTime(new Date(event.date));
+      event.show = (eventDate.getTime() == tomorrow.getTime());
+    });
+    var self = this;
+    this.$scope['filterDate'] = function(date) {
+      return self.$filter('date')(date, 'EEEE @ h:mm a');
+    };
+    this.$scope['selectedLink'] = index;
+  };
+
 
   TheListController.prototype.showNext = function(index) {
     this.$scope['venueNames'].forEach(function(venueName) {
