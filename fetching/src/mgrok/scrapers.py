@@ -134,7 +134,6 @@ class _RockwoodSpider(scrapy.Spider):
                 time_str = tds[0].xpath('./text()').extract()
                 if not time_str:
                     continue
-                print time_str
                 match = re.match(r'(\d+):(\d\d)([ap]m)', time_str[0])
                 if not match:
                     continue
