@@ -25,7 +25,8 @@ from mgrok.scrapers import (
     )
 from mgrok.ticketfly_api import (
     BrooklynBowlApi,
-    CapitolTheatreApi
+    CapitolTheatreApi,
+    StVitusApi
     )
 from dateutil.parser import parse as parse_date_str
 from pytz import timezone
@@ -85,6 +86,7 @@ def get_api_sites_data():
     output = {}
     output.update(BrooklynBowlApi().get_api_sites_data())
     output.update(CapitolTheatreApi().get_api_sites_data())
+    output.update(StVitusApi().get_api_sites_data())
     return output
 
 def main():

@@ -33,7 +33,6 @@ class _TicketFlyApi(object):
         request_params = {
             'maxResults': 1000,
             'venueId': self.venue_id,
-            'orgId': self.org_id,
             'fromDate': from_date,
             'thruDate': thru_date,
             'pageNum': page_num,
@@ -115,3 +114,9 @@ class CapitolTheatreApi(_TicketFlyApi):
     """Fetches data for events at The Capitol Theatre"""
     def __init__(self):
         super(CapitolTheatreApi, self).__init__(4725, 767)
+
+
+class StVitusApi(_TicketFlyApi):
+    """Fetches data for events at St Vitus"""
+    def __init__(self):
+        super(StVitusApi, self).__init__(1851, 663)
