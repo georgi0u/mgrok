@@ -109,7 +109,7 @@ main {
         padding-top: 12px;
         padding-bottom: 12px;
       }
-      &:hover {
+      &.contains_link:hover {
         background: #ddd;
       }
       &.does_not_contain_link:hover .message {
@@ -124,7 +124,8 @@ main {
       }
       &.past {
         &:hover {
-          color: inherit;
+          background: #eee;
+          color: #ccc;
         }
         color: #ccc;
         .datetime {
@@ -138,20 +139,19 @@ main {
       .event-artists {       
         .artist {
           display: block;
-          padding-bottom: 5px;
-          text-indent: -15px;
-          padding-left: 15px;
           line-height: 20px;
-
+          padding-bottom: 5px;
+          padding-left: 15px;
+          text-indent: -15px;
         }
       }
       .message {
-        position: absolute;
-        top: 0;
-        text-align: center;
         color: red;
-        font-style: italic;
         display: none;
+        font-style: italic;
+        position: absolute;
+        text-align: center;
+        top: 0;
       }
     }
   }

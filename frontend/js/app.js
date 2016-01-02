@@ -203,8 +203,7 @@
 
   TheListController.prototype.getEventClass = function(event) {
     var alreadyHappened = this.alreadyHappened(event);
-    var contains_link =
-        (event.event_link && event.event_link != '' && !alreadyHappened);
+    var contains_link = (event.event_link && event.event_link != '');
 
     return {
       contains_link: contains_link,
