@@ -61,6 +61,13 @@ class _TicketWebSpider(scrapy.Spider):
         '?dispatch=loadSelectionData&eventId=')
 
     def parse(self, response):
+        num_pages = len(response.css('.pagination-nav li'))
+        for page_number in range(0, num_pages):
+            yield scrapy.Request(
+                response.urljoin('?page={0}'.format(page_number+1)),
+                callback=self._parse_event_list)
+
+    def _parse_event_list(self, response):
         selector = '.event-list .media-body .event-name a::attr(href)'
         for event_link in response.css(selector):
             # The link has angular template garbage in it, so we generate our
@@ -72,15 +79,17 @@ class _TicketWebSpider(scrapy.Spider):
     def _parse_event(self, response):
         artists = (
             response
-            .css('.artist-text .highlight span')
-            .xpath('./text()')
-            .extract())
+            .css('.artist-text .highlight span'))
+        if not artists:
+            yield None
+        artists = artists.xpath('./text()').extract()
         date_text = (
             response
             .css('#edp-artist-Col .artist-text p')
-            .xpath('./text()')
-            .extract()[0]
-            .strip())
+            .xpath('./text()'))
+        if not date_text:
+            yield None
+        date_text = date_text[0].extract().strip()
         match = re.match(
             r'^'
             r'(?P<day_of_week>\w+), '
@@ -119,13 +128,10 @@ class _RockwoodSpider(scrapy.Spider):
             month = int(match.group(1))
             day_of_month = int(match.group(2))
             for artist_row in first_column.css('.sched_pod tr'):
-                time_str = (
-                    artist_row
-                    .css('td')[0]
-                    .xpath('./text()')
-                    .extract())
+                time_str = artist_row.css('td')
                 if not time_str:
                     continue
+                time_str = time_str[0].xpath('./text()').extract()
                 match = re.match(r'(\d+):(\d\d)([ap]m)', time_str[0])
                 if not match:
                     continue
@@ -205,4 +211,10 @@ class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
     start_urls = [
         'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869'
+        ]
+
+class WebsterHallSpider(_TicketWebSpider):
+    name = "Webster Hall"
+    start_urls = [
+        'http://www.ticketweb.com/venue/webster-hall-new-york-ny/10015'
         ]
