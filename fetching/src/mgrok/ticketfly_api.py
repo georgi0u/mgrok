@@ -33,6 +33,7 @@ class _TicketFlyApi(object):
         request_params = {
             'maxResults': 1000,
             'venueId': self.venue_id,
+            'orgId': self.org_id,
             'fromDate': from_date,
             'thruDate': thru_date,
             'pageNum': page_num,
