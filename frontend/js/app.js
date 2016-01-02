@@ -98,9 +98,10 @@
    */
   TheListController.prototype.showTomorrow = function(index) {
     var tomorrowStart = new Date();
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
     tomorrowStart.setHours(7);
     var tomorrowEnd = new Date();
-    tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
+    tomorrowEnd.setDate(tomorrowEnd.getDate() + 2);
     tomorrowEnd.setHours(4);
 
     this.$scope['eventList'].forEach(function(event) {
