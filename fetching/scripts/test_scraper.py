@@ -9,7 +9,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 
 SCRAPY_SPIDERS = [
-    # WarsawSpider,
+    WarsawSpider,
     # HighlineBallroomSpider,
     # BoweryBallroomSpider,
     # MercuryLoungeSpider,
@@ -18,7 +18,7 @@ SCRAPY_SPIDERS = [
     # TerminalFiveSpider,
 #    RockwoodStageOneSpider,
 #    RockwoodStageTwoSpider,
-    RockwoodStageThreeSpider
+#    RockwoodStageThreeSpider
 #  WebsterHallSpider
     ]
 

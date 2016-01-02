@@ -61,11 +61,17 @@ class _TicketWebSpider(scrapy.Spider):
         '?dispatch=loadSelectionData&eventId=')
 
     def parse(self, response):
+        pages = [
+            scrapy.Request(response.url, callback=self._parse_event_list)
+        ]
         num_pages = len(response.css('.pagination-nav li'))
-        for page_number in range(0, num_pages):
-            yield scrapy.Request(
-                response.urljoin('?page={0}'.format(page_number+1)),
-                callback=self._parse_event_list)
+        for page_number in range(1, num_pages):
+            pages.append(
+                scrapy.Request(
+                    response.urljoin('?page={0}'.format(page_number+1)),
+                    callback=self._parse_event_list))
+        for page in pages:
+            yield page
 
     def _parse_event_list(self, response):
         selector = '.event-list .media-body .event-name a::attr(href)'
