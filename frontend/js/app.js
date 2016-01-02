@@ -176,10 +176,13 @@
   TheListController.prototype.showWorkWeek = function(index) {
     var today = zeroOutTime(new Date());
     var daysToMonday = 1 - today.getDay();
+    var daysToThursday = 4 - today.getDay();
+    if (today.getDay() >= 5 || today.getDay() == 0) {
+        daysToMonday += 7;
+        daysToThursday += 7;
+    }
     var mondayDate = new Date(today);
     mondayDate.setDate(today.getDate() + daysToMonday);
-
-    var daysToThursday = 4 - today.getDay();
     var thursdayDate = new Date(today);
     thursdayDate.setDate(today.getDate() + daysToThursday);
     thursdayDate.setHours(23);
