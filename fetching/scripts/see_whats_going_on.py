@@ -46,7 +46,7 @@ SCRAPY_SPIDERS = [
     TerminalFiveSpider,
     # Rockwood
     RockwoodStageOneSpider,
-    RockwoodStageThreeSpider
+    RockwoodStageThreeSpider,
     RockwoodStageTwoSpider,
     ]
 
