@@ -17,7 +17,10 @@ from mgrok.scrapers import (
     RoughTradeSpider,
     TerminalFiveSpider,
     HighlineBallroomSpider,
-    WarsawSpider
+    WarsawSpider,
+    RockwoodStageOneSpider,
+    RockwoodStageTwoSpider,
+    RockwoodStageThreeSpider
     )
 from mgrok.ticketfly_api import (
     BrooklynBowlApi,
@@ -30,6 +33,7 @@ from scrapy.settings import Settings
 
 
 SCRAPY_SPIDERS = [
+    # TicketWeb
     WarsawSpider,
     HighlineBallroomSpider,
     # Bowery
@@ -38,6 +42,10 @@ SCRAPY_SPIDERS = [
     MusicHallOfWilliamsburgSpider,
     RoughTradeSpider,
     TerminalFiveSpider,
+    # Rockwood
+    RockwoodStageOneSpider,
+    RockwoodStageTwoSpider,
+    RockwoodStageThreeSpider
     ]
 
 def get_scraped_sites_data():

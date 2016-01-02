@@ -4,7 +4,7 @@ venues.
 """
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 import scrapy
@@ -37,7 +37,7 @@ class _BoweryPresentsSpider(scrapy.Spider):
                 response
                 .css('.event-info .times .doors').xpath('./text()')
                 .extract()[0].lstrip('Doors: '))
-            timezone = pytz.timezone('US/Eastern')
+            timezone = pytz.timezone('America/New_York')
             the_datetime = timezone.localize(
                 datetime.strptime(
                     date + ' ' + time,
@@ -92,7 +92,7 @@ class _TicketWebSpider(scrapy.Spider):
             r'(?P<am_pm>[AP]M) '
             r'(?P<timezone>\w+)', date_text)
         no_tz_date_str = date_text[0:match.end('am_pm')].strip()
-        timezone = pytz.timezone('US/Eastern')
+        timezone = pytz.timezone('America/New_York')
         the_datetime = timezone.localize(
             datetime.strptime(
                 no_tz_date_str,
@@ -105,6 +105,75 @@ class _TicketWebSpider(scrapy.Spider):
             'date': the_datetime.isoformat(),
             'venue_name': self.name
         }
+
+
+class _RockwoodSpider(scrapy.Spider):
+    """Base class for Rockwood spiders"""
+    start_urls = ['http://www.rockwoodmusichall.com/']
+    selector = None
+
+    def parse(self, response):
+        for first_column in response.css(self.selector):
+            date_str = first_column.css('h2').xpath('./text()').extract()[0]
+            match = re.match(r'(\d\d)\.(\d\d).+', date_str)
+            month = int(match.group(1))
+            day_of_month = int(match.group(2))
+            for artist_row in first_column.css('.sched_pod tr'):
+                time_str = (
+                    artist_row
+                    .css('td')[0]
+                    .xpath('./text()')
+                    .extract())
+                if not time_str:
+                    continue
+                match = re.match(r'(\d+):(\d\d)([ap]m)', time_str[0])
+                if not match:
+                    continue
+                hour = int(match.group(1))
+                minute = int(match.group(2))
+                ampm = match.group(3)
+
+                if ampm == 'am':
+                    hour %= 12
+                else:
+                    hour += 12
+
+                event_date = datetime(
+                    datetime.now().year, month, day_of_month,
+                    hour, minute, 0, 0)
+                event_date = (
+                    pytz.timezone('America/New_York').localize(event_date))
+                if ampm == 'am':
+                    event_date += timedelta(1)
+
+                artist = (
+                    artist_row
+                    .css('td')[1]
+                    .css('a')
+                    .xpath('./text()')
+                    .extract())
+                if not artist:
+                    continue
+
+                yield {
+                    'event_link': self.start_urls[0],
+                    'artists': artist,
+                    'date': event_date.isoformat(),
+                    'venue_name': self.name
+                    }
+
+
+class RockwoodStageOneSpider(_RockwoodSpider):
+    selector = '.first_column'
+    name = "Rockwood (Stage 1)"
+
+class RockwoodStageTwoSpider(_RockwoodSpider):
+    selector = '.second_column'
+    name = "Rockwood (Stage 2)"
+
+class RockwoodStageThreeSpider(_RockwoodSpider):
+    selector = '.third_column'
+    name = "Rockwood (Stage 3)"
 
 class BoweryBallroomSpider(_BoweryPresentsSpider):
     name = 'Bowery Ballroom'

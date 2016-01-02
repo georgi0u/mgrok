@@ -74,10 +74,17 @@
 
 
   TheListController.prototype.showToday = function(index) {
-    var today = zeroOutTime(new Date());
+    var todayStart = new Date();
+    todayStart.setHours(7);
+    var todayEnd = new Date();
+    todayEnd.setDate(todayEnd.getDate() + 1);
+    todayEnd.setHours(4);
+
     this.$scope['eventList'].forEach(function(event) {
-      var eventDate = zeroOutTime(new Date(event.date));
-      event.show = (eventDate.getTime() == today.getTime());
+      var eventDate = new Date(event.date);
+      event.show = (
+          eventDate.getTime() >= todayStart.getTime() &&
+          eventDate.getTime() <= todayEnd.getTime());
     });
     var self = this;
     this.$scope['filterDate'] = function(date) {
@@ -86,13 +93,23 @@
     this.$scope['selectedLink'] = index;
   };
 
+  /**
+   * TODO: factor out filtering events by date range
+   */
   TheListController.prototype.showTomorrow = function(index) {
-    var tomorrow = zeroOutTime(new Date());
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    var tomorrowStart = new Date();
+    tomorrowStart.setHours(7);
+    var tomorrowEnd = new Date();
+    tomorrowEnd.setDate(tomorrowEnd.getDate() + 1);
+    tomorrowEnd.setHours(4);
+
     this.$scope['eventList'].forEach(function(event) {
-      var eventDate = zeroOutTime(new Date(event.date));
-      event.show = (eventDate.getTime() == tomorrow.getTime());
+      var eventDate = new Date(event.date);
+      event.show = (
+          eventDate.getTime() >= tomorrowStart.getTime() &&
+          eventDate.getTime() <= tomorrowEnd.getTime());
     });
+
     var self = this;
     this.$scope['filterDate'] = function(date) {
       return self.$filter('date')(date, 'EEEE @ h:mm a');
