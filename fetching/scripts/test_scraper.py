@@ -18,8 +18,8 @@ SCRAPY_SPIDERS = [
     # TerminalFiveSpider,
 #    RockwoodStageOneSpider,
 #    RockwoodStageTwoSpider,
-#    RockwoodStageThreeSpider
-  WebsterHallSpider
+    RockwoodStageThreeSpider
+#  WebsterHallSpider
     ]
 
 def get_scraped_sites_data():

@@ -128,10 +128,13 @@ class _RockwoodSpider(scrapy.Spider):
             month = int(match.group(1))
             day_of_month = int(match.group(2))
             for artist_row in first_column.css('.sched_pod tr'):
-                time_str = artist_row.css('td')
+                tds = artist_row.css('td')
+                if not tds:
+                    continue
+                time_str = tds[0].xpath('./text()').extract()
                 if not time_str:
                     continue
-                time_str = time_str[0].xpath('./text()').extract()
+                print time_str
                 match = re.match(r'(\d+):(\d\d)([ap]m)', time_str[0])
                 if not match:
                     continue
