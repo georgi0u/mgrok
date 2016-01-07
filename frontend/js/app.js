@@ -227,20 +227,11 @@
     var lowerCaseFilterName = filterStr.toLowerCase();
     this.$scope['venueNames'] = this.venueNames.filter(function(venueName) {
       var lowerCaseVenueName = venueName.toLowerCase();
-      if (lowerCaseVenueName.indexOf(lowerCaseFilterName) != -1) {
-        return true;
-      }
-
       var noPunctuationLowerCaseVenueName =
           lowerCaseVenueName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
       var noPunctuationFilter =
           lowerCaseFilterName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-      if (noPunctuationLowerCaseVenueName.indexOf(noPunctuationFilter) != -1) {
-        return true;
-      }
-
-      return false;
-      
+      return (noPunctuationLowerCaseVenueName.match(noPunctuationFilter) != null) 
     });
   };
 
