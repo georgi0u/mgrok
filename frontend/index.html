@@ -37,6 +37,7 @@
           <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
           <h2 data-ng-if="error">{{error}}</h2>
           <nav data-ng-if="!error">
+            <!-- change this to javascript events, so you're not hardcoding indexes, idiot-->
             <ul id="navigation-links" >
               <li data-ng-click="theListController.showToday(0)"
                   data-ng-class="{selected: selectedLink == 0}">today</li>
@@ -49,6 +50,10 @@
               <li data-ng-click="theListController.showWeekend(4)"
                   data-ng-class="{selected: selectedLink == 4}">this weekend</li>
             </ul>
+            <input type="text" id="venueFilter"
+                   data-ng-model="venueFilter"
+                   data-ng-change="theListController.filterVenues(venueFilter)"
+                   placeholder="which venue?"
           </nav>
         </div>
       </header>
@@ -95,6 +100,5 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
     <script src="js/less.min.js" type="text/javascript"></script>
     <script src="js/app.js"></script>
-
   </body>
 </html>
