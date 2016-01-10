@@ -178,8 +178,9 @@ class _RockwoodSpider(scrapy.Spider):
             for artist in artists:
                 the_date = (
                     artist['date']
-                    .strftime(u'%I:%M %p'.encode('utf-8'))
-                    .decode('utf-8'))
+                    .strftime('%I:%M')
+                    .lstrip('0'))
+
                 artist_strings.append(
                     u'{} ({})'.format(artist['artist'], the_date))
             if not artists:
