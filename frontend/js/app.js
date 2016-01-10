@@ -20,6 +20,7 @@
     var self = this;
     this.$scope = $scope;
     this.$filter = $filter;
+    this.venueNames = [];
 
     // Get Venue Data
     $http.get("/js/the_raw_list.js").then(
@@ -32,16 +33,16 @@
         $scope['venueData'] = shows;
 
         // Add sorted venue names to the scope
-        var venueNames = [];
+        self.venueNames = [];
         angular.forEach(shows, function(events, venueName) {
-          venueNames.push(venueName);
+          self.venueNames.push(venueName);
         });
-        venueNames.sort(function (a, b) {
+        self.venueNames.sort(function (a, b) {
           a = a.toLowerCase().replace(/^the /, '');
           b = b.toLowerCase().replace(/^the /, '');
           return a > b ? 1 : -1;
         });
-        $scope['venueNames'] = venueNames;
+        $scope['venueNames'] = angular.copy(self.venueNames);
 
         // Add a convenience array of the events to the scope
         $scope['eventList'] = [];
@@ -214,6 +215,24 @@
       does_not_contain_link: !contains_link,
       past: alreadyHappened
     };
+  };
+
+  TheListController.prototype.filterVenues = function(filterStr) {
+    if (!filterStr) {
+      this.$scope['venueNames'] = angular.copy(this.venueNames);
+      return
+    }
+    
+    var filteredVenueNames = [];
+    var lowerCaseFilterName = filterStr.toLowerCase();
+    this.$scope['venueNames'] = this.venueNames.filter(function(venueName) {
+      var lowerCaseVenueName = venueName.toLowerCase();
+      var noPunctuationLowerCaseVenueName =
+          lowerCaseVenueName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+      var noPunctuationFilter =
+          lowerCaseFilterName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+      return (noPunctuationLowerCaseVenueName.match(noPunctuationFilter) != null) 
+    });
   };
 
 
