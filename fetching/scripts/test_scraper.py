@@ -9,17 +9,19 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 
 SCRAPY_SPIDERS = [
-    WarsawSpider,
+    # WarsawSpider,
     # HighlineBallroomSpider,
     # BoweryBallroomSpider,
     # MercuryLoungeSpider,
     # MusicHallOfWilliamsburgSpider,
     # RoughTradeSpider,
     # TerminalFiveSpider,
-#    RockwoodStageOneSpider,
-#    RockwoodStageTwoSpider,
-#    RockwoodStageThreeSpider
-#  WebsterHallSpider
+    # RockwoodStageOneSpider,
+    # RockwoodStageTwoSpider,
+    # RockwoodStageThreeSpider,
+    # WebsterHallSpider,
+    # TheSpaceAtWestburySpider,
+    MSGSpider
     ]
 
 def get_scraped_sites_data():

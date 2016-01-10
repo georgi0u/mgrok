@@ -177,6 +177,100 @@ class _RockwoodSpider(scrapy.Spider):
                     }
 
 
+class TheSpaceAtWestburySpider(scrapy.Spider):
+    """
+    This bastard uses tables for layout, and there are no id or class tags. Boo.
+    TODO: Pick this up eventually.
+    """
+    name = 'The Space at Westbury'
+    base_url = 'http://thespaceatwestbury.com/'
+    start_urls = [base_url + '?page=shows']
+
+    def parse(self, response):
+        onclick_string_predicate = 'location.href=\'?page=show&sid='
+        attribute_selector = (
+            '//*[starts-with(@onclick, "{0}")]/'
+            '@onclick'.format(onclick_string_predicate))
+        for location in response.xpath(attribute_selector):
+            event_url_suffix = location.extract().partition('?')[2]
+            event_url = '{0}?{1}'.format(self.base_url, event_url_suffix)
+            yield scrapy.Request(event_url, callback=self._parse_event)
+
+    def _parse_event(self, response):
+        yield None
+
+
+
+class _MSGSpider(scrapy.Spider):
+    base_url_format = (
+        'http://www.beacontheatre.com/calendar'
+        '?page=0&evmonth=&evtype=concert&venue={0}')
+
+    def parse(self, response):
+        event_links = response.css('td.event_name a').xpath('@href').extract()
+        for event_url in event_links:
+            yield scrapy.Request(event_url, callback=self._parse_event)
+
+    def _parse_event(self, response):
+        title = (
+            response
+            .css('#event-information .event-title')
+            .xpath('./text()')
+            .extract())
+        if not title:
+            title = response.url
+
+        events = []
+        for event_date in response.css('.box-event-calendar'):
+            short_month_str = (
+                event_date
+                .css('.m-event')
+                .xpath('./text()')
+                .extract()[0])
+
+            day_str = (
+                event_date
+                .css('.number-day-event')
+                .xpath('./text()')
+                .extract()[0])
+
+            year_str = (
+                event_date
+                .css('.d-event')
+                .xpath('./text()')
+                .extract()[0])
+
+            time_str = (
+                event_date
+                .css('.time-event')
+                .xpath('./text()')
+                .extract()[0])
+
+            datetime_str = '{} {} {} {}'.format(
+                short_month_str,
+                day_str,
+                year_str,
+                time_str)
+
+            the_datetime = datetime.strptime(
+                datetime_str,
+                '%b %d %Y %I:%M %p')
+
+            timezone = pytz.timezone('America/New_York')
+            the_datetime = timezone.localize(the_datetime)
+
+            events.append({
+                'event_link': response.url,
+                'artists': [title],
+                'date': the_datetime.isoformat(),
+                'venue_name': self.name
+            })
+        yield events
+
+class MSGSpider(_MSGSpider):
+    name = 'Madison Square Garden'
+    start_urls = [_MSGSpider.base_url_format.format('gardens')]
+
 class RockwoodStageOneSpider(_RockwoodSpider):
     selector = '.first_column'
     name = "Rockwood (Stage 1)"

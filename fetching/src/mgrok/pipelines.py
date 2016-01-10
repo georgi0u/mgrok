@@ -11,6 +11,15 @@ class JsonWriterPipeline(object):
 
     def process_item(self, item, scraper):
         """Adds items to the output dictionary."""
+        if isinstance(item, list):
+            for individual_item in item:
+                self._process_item(individual_item)
+        else:
+            self._process_item(item)
+
+        return item
+
+    def _process_item(self, item):
         if item['venue_name'] not in self.items_:
             self.items_[item['venue_name']] = []
         self.items_[item['venue_name']].append(dict(item))
