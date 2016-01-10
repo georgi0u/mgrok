@@ -129,10 +129,13 @@ class _RockwoodSpider(scrapy.Spider):
 
     def parse(self, response):
         for first_column in response.css(self.selector):
-            date_str = first_column.css('h2').xpath('./text()').extract()[0]
-            match = re.match(r'(\d\d)\.(\d\d).+', date_str)
+            date_str = first_column.css('h2').xpath('./text()').extract()
+            if not date_str:
+                continue
+            match = re.match(r'(\d\d)\.(\d\d).+', date_str[0])
             month = int(match.group(1))
             day_of_month = int(match.group(2))
+            artists = []
             for artist_row in first_column.css('.sched_pod tr'):
                 tds = artist_row.css('td')
                 if not tds:
@@ -168,13 +171,26 @@ class _RockwoodSpider(scrapy.Spider):
                     .extract())
                 if not artist:
                     continue
+                artists.append({'artist': artist[0], 'date': event_date})
 
+            artists.sort(key=lambda x: x['date'])
+            artist_strings = []
+            for artist in artists:
+                the_date = (
+                    artist['date']
+                    .strftime(u'%I:%M %p'.encode('utf-8'))
+                    .decode('utf-8'))
+                artist_strings.append(
+                    u'{} ({})'.format(artist['artist'], the_date))
+            if not artists:
+                yield None
+            else:
                 yield {
                     'event_link': self.start_urls[0],
-                    'artists': artist,
-                    'date': event_date.isoformat(),
+                    'artists': artist_strings,
+                    'date': artists[0]['date'].isoformat(),
                     'venue_name': self.name
-                    }
+                }
 
 
 class TheSpaceAtWestburySpider(scrapy.Spider):
