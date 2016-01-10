@@ -21,7 +21,10 @@ SCRAPY_SPIDERS = [
     # RockwoodStageThreeSpider,
     # WebsterHallSpider,
     # TheSpaceAtWestburySpider,
-    MSGSpider
+    MSGSpider,
+    TheBeaconSpider,
+    TheTheaterAtMSG,
+    RadioCity
     ]
 
 def get_scraped_sites_data():

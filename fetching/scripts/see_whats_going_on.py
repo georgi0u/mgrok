@@ -13,20 +13,24 @@ import sys
 from mgrok.scrapers import (
     BoweryBallroomSpider,
     HighlineBallroomSpider,
+    MSGSpider,
     MercuryLoungeSpider,
     MusicHallOfWilliamsburgSpider,
+    RadioCitySpider,
     RockwoodStageOneSpider,
     RockwoodStageThreeSpider,
     RockwoodStageTwoSpider,
     RoughTradeSpider,
     TerminalFiveSpider,
+    TheBeaconSpider,
+    TheTheaterAtMSGSpider,
     WarsawSpider,
-    WebsterHallSpider
+    WebsterHallSpider,
     )
 from mgrok.ticketfly_api import (
     BrooklynBowlApi,
     CapitolTheatreApi,
-    StVitusApi
+    StVitusApi,
     )
 from dateutil.parser import parse as parse_date_str
 from pytz import timezone
@@ -49,6 +53,11 @@ SCRAPY_SPIDERS = [
     RockwoodStageOneSpider,
     RockwoodStageThreeSpider,
     RockwoodStageTwoSpider,
+    # MSG
+    MSGSpider,
+    RadioCitySpider,
+    TheBeaconSpider,
+    TheTheaterAtMSGSpider,
     ]
 
 def get_scraped_sites_data():

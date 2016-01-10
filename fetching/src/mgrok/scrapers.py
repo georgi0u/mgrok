@@ -209,6 +209,8 @@ class _MSGSpider(scrapy.Spider):
     def parse(self, response):
         event_links = response.css('td.event_name a').xpath('@href').extract()
         for event_url in event_links:
+            if event_url[0] == '/':
+                event_url = response.urljoin(event_url)
             yield scrapy.Request(event_url, callback=self._parse_event)
 
     def _parse_event(self, response):
@@ -216,7 +218,7 @@ class _MSGSpider(scrapy.Spider):
             response
             .css('#event-information .event-title')
             .xpath('./text()')
-            .extract())
+            .extract()[0])
         if not title:
             title = response.url
 
@@ -265,11 +267,23 @@ class _MSGSpider(scrapy.Spider):
                 'date': the_datetime.isoformat(),
                 'venue_name': self.name
             })
-        yield events
+        yield {'events': events}
 
 class MSGSpider(_MSGSpider):
     name = 'Madison Square Garden'
     start_urls = [_MSGSpider.base_url_format.format('gardens')]
+
+class TheBeaconSpider(_MSGSpider):
+    name = 'The Beacon Theatre'
+    start_urls = [_MSGSpider.base_url_format.format('beacon')]
+
+class TheTheaterAtMSGSpider(_MSGSpider):
+    name = 'The Theater at Madison Square Garden'
+    start_urls = [_MSGSpider.base_url_format.format('theatermsg')]
+
+class RadioCitySpider(_MSGSpider):
+    name = 'Radio City Music Hall'
+    start_urls = [_MSGSpider.base_url_format.format('radiocity')]
 
 class RockwoodStageOneSpider(_RockwoodSpider):
     selector = '.first_column'
