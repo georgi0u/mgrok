@@ -7,7 +7,7 @@ provides both (1) a script for fetching information about shows and (2) a fronte
 hosted at http://www.thegeorgelist.com
 
 
-# a descrption of the very janky way this application works
+# a descrption of the very janky way this works
 
 The frontend code is expected to be hosted on a webserver that also knows how to respond to a request for `the_raw_list.js`. 
 This js file is expected to contain a specifically formatted JSON object which encapsulates all the shows going on
