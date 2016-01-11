@@ -15,9 +15,9 @@ for the next X days. This format should be more strictly defined, but it's not, 
 
 So the way I'm doing this is as follows:
 
-You set up the frontend code behind, say, Apache.
-You set up the fetching code in a virtualenv on the same server.
-You cron the fetching code's `see_whats_going_on.py` script to run one a day and output a file to the fetching code's js directory.
+1. You set up the frontend code behind, say, Apache.
+1. You set up the fetching code in a virtualenv on the same server.
+1. You cron the fetching code's `see_whats_going_on.py` script to run one a day and output a file to the fetching code's js directory.
 
 Boom. You've got an application.
 
