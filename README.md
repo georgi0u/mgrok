@@ -27,3 +27,7 @@ Boom. You've got an application.
 * monitoring to see when scrappers stop working when venues' sites' formats change 
 * more venues
 * mobile friendly interface (angular material? column layout?)
+* add an all-in-one build/test script
+  * closure
+  * server-side less css compiling
+  * unit tests
