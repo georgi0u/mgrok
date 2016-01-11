@@ -18,7 +18,7 @@ SCRAPY_SPIDERS = [
     # TerminalFiveSpider,
     RockwoodStageOneSpider,
     # RockwoodStageTwoSpider,
-    # RockwoodStageThreeSpider,
+    RockwoodStageThreeSpider,
     # WebsterHallSpider,
     # TheSpaceAtWestburySpider,
     # MSGSpider,

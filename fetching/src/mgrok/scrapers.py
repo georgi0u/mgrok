@@ -166,9 +166,16 @@ class _RockwoodSpider(scrapy.Spider):
                 artist = (
                     artist_row
                     .css('td')[1]
-                    .css('*')
+                    .css('a')
                     .xpath('./text()')
                     .extract())
+                if not artist:
+                    artist = (
+                        artist_row
+                        .css('td')[1]
+                        .css('strong')
+                        .xpath('./text()')
+                        .extract())
                 if not artist:
                     continue
                 artists.append({'artist': artist[0], 'date': event_date})
