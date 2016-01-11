@@ -166,7 +166,7 @@ class _RockwoodSpider(scrapy.Spider):
                 artist = (
                     artist_row
                     .css('td')[1]
-                    .css('a')
+                    .css('*')
                     .xpath('./text()')
                     .extract())
                 if not artist:
