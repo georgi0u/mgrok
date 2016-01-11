@@ -31,3 +31,9 @@ Boom. You've got an application.
   * closure
   * server-side less css compiling
   * unit tests
+* artist filtering
+* option to hide venues that don't have anything going on
+* cookie-persisted user customization of ui
+  * reorder venues
+  * hide venues
+  * persist last date filter
