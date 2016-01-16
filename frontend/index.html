@@ -37,18 +37,12 @@
           <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
           <h2 data-ng-if="error">{{error}}</h2>
           <nav data-ng-if="!error">
-            <!-- change this to javascript events, so you're not hardcoding indexes, idiot-->
             <ul id="navigation-links" >
-              <li data-ng-click="theListController.showToday(0)"
-                  data-ng-class="{selected: selectedLink == 0}">today</li>
-              <li data-ng-click="theListController.showTomorrow(1)"
-                  data-ng-class="{selected: selectedLink == 1}">tomorrow</li>
-              <li data-ng-click="theListController.showNext(2)"
-                  data-ng-class="{selected: selectedLink == 2}">next</li>
-              <li data-ng-click="theListController.showWorkWeek(3)"
-                  data-ng-class="{selected: selectedLink == 3}">the work week</li>
-              <li data-ng-click="theListController.showWeekend(4)"
-                  data-ng-class="{selected: selectedLink == 4}">this weekend</li>
+              <li data-ng-click="theListController.showToday()" class="selected">today</li>
+              <li data-ng-click="theListController.showTomorrow()">tomorrow</li>
+              <li data-ng-click="theListController.showNext()">next</li>
+              <li data-ng-click="theListController.showWorkWeek()">the work week</li>
+              <li data-ng-click="theListController.showWeekend()">this weekend</li>
             </ul>
             <input type="text" id="venueFilter"
                    data-ng-model="venueFilter"

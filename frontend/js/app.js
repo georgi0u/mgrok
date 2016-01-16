@@ -63,65 +63,48 @@
     return eventInThePast;
   };
 
-  TheListController.prototype.defaultDateFilter = function(date) {
-    return this.$filter('date')(date, 'EEE, MMM d @ h:mm a');
-  };
-
-
   TheListController.prototype.getEventsToShow = function(venueName) {
     var events = this.$scope['venueData'][venueName];
     return events.filter(function(event) { return event.show; });
   };
 
+  TheListController.prototype.showBetweenDates =
+    function(startDate, endDate, opt_dateFormat) {
+      this.$scope['eventList'].forEach(function(event) {
+        var eventDate = new Date(event.date);
+        event.show = (
+          eventDate.getTime() >= startDate.getTime() &&
+            eventDate.getTime() <= endDate.getTime());
+      });
+      
+      var self = this;
+      var dateFormat = (opt_dateFormat == undefined) ?
+          'EEEE @ h:mm a' : opt_dateFormat;
+      this.$scope['filterDate'] = function(date) {
+        return self.$filter('date')(date, dateFormat);
+      };
+    };
 
-  TheListController.prototype.showToday = function(index) {
+  TheListController.prototype.showToday = function() {
     var todayStart = new Date();
     todayStart.setHours(7);
     var todayEnd = new Date();
     todayEnd.setDate(todayEnd.getDate() + 1);
     todayEnd.setHours(4);
-
-    this.$scope['eventList'].forEach(function(event) {
-      var eventDate = new Date(event.date);
-      event.show = (
-          eventDate.getTime() >= todayStart.getTime() &&
-          eventDate.getTime() <= todayEnd.getTime());
-    });
-    var self = this;
-    this.$scope['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'EEEE @ h:mm a');
-    };
-    this.$scope['selectedLink'] = index;
+    this.showBetweenDates(todayStart, todayEnd);
   };
 
-  /**
-   * TODO: factor out filtering events by date range
-   */
-  TheListController.prototype.showTomorrow = function(index) {
+  TheListController.prototype.showTomorrow = function() {
     var tomorrowStart = new Date();
     tomorrowStart.setDate(tomorrowStart.getDate() + 1);
     tomorrowStart.setHours(7);
     var tomorrowEnd = new Date();
     tomorrowEnd.setDate(tomorrowEnd.getDate() + 2);
     tomorrowEnd.setHours(4);
-
-    this.$scope['eventList'].forEach(function(event) {
-      var eventDate = new Date(event.date);
-      event.show = (
-          eventDate.getTime() >= tomorrowStart.getTime() &&
-          eventDate.getTime() <= tomorrowEnd.getTime());
-    });
-
-    var self = this;
-    this.$scope['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'EEEE @ h:mm a');
-    };
-    this.$scope['selectedLink'] = index;
+    this.showBetweenDates(tomorrowStart, tomorrowEnd);
   };
 
-
-  TheListController.prototype.showNext = function(index) {
-
+  TheListController.prototype.showNext = function() {
     this.$scope['venueNames'].forEach(function(venueName) {
       var events = this.$scope['venueData'][venueName];
       var foundNextEvent = false;
@@ -134,21 +117,13 @@
         }
       }, this);
     }, this);
-    this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
-    this.$scope['selectedLink'] = index;
+    var self = this;
+    this.$scope['filterDate'] = function(date) {
+      return self.$filter('date')(date, 'EEE, MMM d @ h:mm a');
+    };
   };
 
-
-  TheListController.prototype.showEverything = function(index) {
-    this.$scope['eventList'].forEach(function(event) {
-      event.show = true;
-    });
-    this.$scope['filterDate'] = this.defaultDateFilter.bind(this);
-    this.$scope['selectedLink'] = index;
-  };
-
-
-  TheListController.prototype.showWeekend = function(index) {
+  TheListController.prototype.showWeekend = function() {
     var today = zeroOutTime(new Date());
     var daysToThursday = 4 - today.getDay();
     var thursdayDate = new Date(today);
@@ -159,23 +134,11 @@
     sundayDate.setHours(23);
     sundayDate.setMinutes(59);
     sundayDate.setSeconds(59);
-
-    this.$scope['eventList'].forEach(function(event) {
-      var eventDate = new Date(event.date);
-      event.show = (
-          eventDate.getTime() >= thursdayDate.getTime()
-          && eventDate.getTime() <= sundayDate.getTime());
-    });
-
-    var self = this;
-    this.$scope['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'EEEE @ h:mm a');
-    };
-    this.$scope['selectedLink'] = index;
+    this.showBetweenDates(thursdayDate, sundayDate);
   };
 
 
-  TheListController.prototype.showWorkWeek = function(index) {
+  TheListController.prototype.showWorkWeek = function() {
     var today = zeroOutTime(new Date());
     var daysToMonday = 1 - today.getDay();
     var daysToThursday = 4 - today.getDay();
@@ -190,19 +153,7 @@
     thursdayDate.setHours(23);
     thursdayDate.setMinutes(59);
     thursdayDate.setSeconds(59);
-
-    this.$scope['eventList'].forEach(function(event) {
-      var eventDate = new Date(event.date);
-      event.show = (
-          eventDate.getTime() >= mondayDate.getTime()
-          && eventDate.getTime() <= thursdayDate.getTime());
-    });
-
-    var self = this;
-    this.$scope['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'EEEE @ h:mm a');
-    };
-    this.$scope['selectedLink'] = index;
+    this.showBetweenDates(mondayDate, thursdayDate);
   };
 
 
@@ -242,7 +193,7 @@
 
   var eventTitleTemplate =
     '  <h3 class="datetime"'+
-    '      title="{{theListController.defaultDateFilter(event.date)}}">'+
+    '      title="{{event.date | date : \'EEE, MMM d @ h:mm a\'}}">'+
     '  <span data-ng-if="theListController.alreadyHappened(event)">already happened on </span>{{filterDate(event.date)}}</h3>' +
     '  <div style="position: relative">' +
     '    <ul class="event-artists">' +
@@ -271,7 +222,14 @@
 
 
 $(function() {
+  // Sticky Header Spacer
   var headerSpacer = $('<div>');
-    headerSpacer.height($('#header').outerHeight(true));
+  headerSpacer.height($('#header').outerHeight(true));
   headerSpacer.insertAfter($('#header'));
+
+  // Navigation link classes
+  $("#navigation-links > li").click(function(event) {
+    $(this).siblings().removeClass("selected");
+    $(this).addClass("selected");
+  });
 });
