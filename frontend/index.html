@@ -35,9 +35,9 @@
       <header id="header">
         <div class="header-container">
           <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
-          <h2 data-ng-if="error">{{error}}</h2>
-          <nav data-ng-if="!error">
-            <ul id="navigation-links" >
+          <h2 data-ng-if="eventModel.error">{{eventModel.error}}</h2>
+          <nav data-ng-if="!eventModel.error">
+            <ul id="date-filters" class="selectable" >
               <li data-ng-click="theListController.showToday()" class="selected">today</li>
               <li data-ng-click="theListController.showTomorrow()">tomorrow</li>
               <li data-ng-click="theListController.showNext()">next</li>
@@ -45,16 +45,23 @@
               <li data-ng-click="theListController.showWeekend()">this weekend</li>
             </ul>
             <input type="text" id="venueFilter"
-                   data-ng-model="venueFilter"
-                   data-ng-change="theListController.filterVenues(venueFilter)"
+                   data-ng-model="eventModel.venueFilter"
+                   data-ng-change="theListController.filterVenuesByName()"
                    placeholder="which venue?">
+            <ul id="dead-venue-filters" class="selectable">
+              <li title="show the venues that don't have anything happening"
+                  data-ng-click="eventModel.showDeadVenues=true;">show dead venues</li>
+              <li title="hide the venues that don't have anything happening"
+                  data-ng-click="eventModel.showDeadVenues=false;" style="display:none">hide dead venues</li>
+            </ul>
           </nav>
         </div>
       </header>
 
       <ul id="list-of-venues">
         <li class="venue"
-            data-ng-repeat="venueName in venueNames">
+            data-ng-repeat="venueName in eventModel.filteredVenues"
+            data-ng-if="eventModel.showDeadVenues || !theListController.isVenueDead(venueName)">
           <div class="venue-event-list">
             <h2>{{venueName}}</h2>
 
@@ -81,7 +88,7 @@
       </ul>
 
       <footer>
-        <span class="updated">the list's shows were last updated on <span title={{lastUpdated}} class="datetime">{{lastUpdated | date : "MMM d yyyy"}}</span>, </span><br/>
+        <span class="updated">the list's shows were last updated on <span title={{eventModel.lastUpdated}} class="datetime">{{eventModel.lastUpdated | date : "MMM d yyyy"}}</span>, </span><br/>
         <span class="copywrite">and its guts are maintained by <a class="homepage" target="_blank" href="http://www.adamgeorgiou.com">adam georgiou</a></span>
       </footer>
 

@@ -11,6 +11,10 @@
     return date;
   };
 
+  var replaceNonAlphaNumChars = function(str) {
+    return str.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g, '');
+  }
+
 
   /////////////////
   // Controllers //
@@ -18,19 +22,21 @@
 
   var TheListController = function($scope, $http, $filter) {
     var self = this;
-    this.$scope = $scope;
     this.$filter = $filter;
     this.venueNames = [];
+    this.eventModel = {};
+
+    $scope['eventModel'] = this.eventModel;
 
     // Get Venue Data
-    $http.get("/js/the_raw_list.js").then(
+    $http.get('/js/the_raw_list.js').then(
       function(response) {
         // Add updated date
-        $scope['lastUpdated'] = response.data.updated;
+        self.eventModel['lastUpdated'] = response.data.updated;
 
         // Add venue data to the scope
         var shows = response.data.shows;
-        $scope['venueData'] = shows;
+        self.eventModel['venueData'] = shows;
 
         // Add sorted venue names to the scope
         self.venueNames = [];
@@ -42,20 +48,24 @@
           b = b.toLowerCase().replace(/^the /, '');
           return a > b ? 1 : -1;
         });
-        $scope['venueNames'] = angular.copy(self.venueNames);
+        self.eventModel['filteredVenues'] = angular.copy(self.venueNames);
 
         // Add a convenience array of the events to the scope
-        $scope['eventList'] = [];
-        angular.forEach($scope['venueData'], function(events, venueName) {
-          $scope['eventList'] = $scope['eventList'].concat(events);
-        });
+        self.eventModel['eventList'] = [];
+        angular.forEach(
+          self.eventModel['venueData'], function(events, venueName) {
+            self.eventModel['eventList'] =
+              self.eventModel['eventList'].concat(events);
+          });
         self.showToday(0);
       },
       function(response) {
-        $scope['error'] = 'Something is messed up. Sorry.';
+        self.eventModel['error'] = 'Something is messed up. Sorry.';
       });
+    
+    this.eventModel['showDeadVenues'] = true;
   };
-
+  
   TheListController.prototype.alreadyHappened = function(event) {
     var today = zeroOutTime(new Date());
     var eventDate = zeroOutTime(new Date(event.date));
@@ -63,24 +73,31 @@
     return eventInThePast;
   };
 
+  TheListController.prototype.isVenueDead = function(venueName) {
+    return !this.eventModel['venueData'][venueName].some(function(event) {
+      return event.show;
+    });
+  };
+
   TheListController.prototype.getEventsToShow = function(venueName) {
-    var events = this.$scope['venueData'][venueName];
+    var events = this.eventModel['venueData'][venueName];
     return events.filter(function(event) { return event.show; });
   };
 
   TheListController.prototype.showBetweenDates =
     function(startDate, endDate, opt_dateFormat) {
-      this.$scope['eventList'].forEach(function(event) {
+      this.eventModel['eventList'].forEach(function(event) {
         var eventDate = new Date(event.date);
         event.show = (
           eventDate.getTime() >= startDate.getTime() &&
             eventDate.getTime() <= endDate.getTime());
+
       });
       
       var self = this;
       var dateFormat = (opt_dateFormat == undefined) ?
           'EEEE @ h:mm a' : opt_dateFormat;
-      this.$scope['filterDate'] = function(date) {
+      this.eventModel['filterDate'] = function(date) {
         return self.$filter('date')(date, dateFormat);
       };
     };
@@ -105,8 +122,8 @@
   };
 
   TheListController.prototype.showNext = function() {
-    this.$scope['venueNames'].forEach(function(venueName) {
-      var events = this.$scope['venueData'][venueName];
+    this.venueNames.forEach(function(venueName) {
+      var events = this.eventModel['venueData'][venueName];
       var foundNextEvent = false;
       events.forEach(function(event) {
         if (this.alreadyHappened(event) || foundNextEvent) {
@@ -118,7 +135,7 @@
       }, this);
     }, this);
     var self = this;
-    this.$scope['filterDate'] = function(date) {
+    this.eventModel['filterDate'] = function(date) {
       return self.$filter('date')(date, 'EEE, MMM d @ h:mm a');
     };
   };
@@ -136,7 +153,6 @@
     sundayDate.setSeconds(59);
     this.showBetweenDates(thursdayDate, sundayDate);
   };
-
 
   TheListController.prototype.showWorkWeek = function() {
     var today = zeroOutTime(new Date());
@@ -156,7 +172,6 @@
     this.showBetweenDates(mondayDate, thursdayDate);
   };
 
-
   TheListController.prototype.getEventClass = function(event) {
     var alreadyHappened = this.alreadyHappened(event);
     var contains_link = (event.event_link && event.event_link != '');
@@ -167,22 +182,22 @@
       past: alreadyHappened
     };
   };
-
-  TheListController.prototype.filterVenues = function(filterStr) {
+  
+  TheListController.prototype.filterVenuesByName = function() {
+    var filterStr = this.eventModel['venueFilter'];
     if (!filterStr) {
-      this.$scope['venueNames'] = angular.copy(this.venueNames);
-      return
+      this.eventModel['filteredVenues'] = angular.copy(this.venueNames);
+      return;
     }
-    
     var filteredVenueNames = [];
     var lowerCaseFilterName = filterStr.toLowerCase();
-    this.$scope['venueNames'] = this.venueNames.filter(function(venueName) {
+    this.eventModel['filteredVenues'] = this.venueNames.filter(function(venueName) {
       var lowerCaseVenueName = venueName.toLowerCase();
       var noPunctuationLowerCaseVenueName =
-          lowerCaseVenueName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+          replaceNonAlphaNumChars(lowerCaseVenueName);
       var noPunctuationFilter =
-          lowerCaseFilterName.replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-      return (noPunctuationLowerCaseVenueName.match(noPunctuationFilter) != null) 
+          replaceNonAlphaNumChars(lowerCaseFilterName);
+      return (noPunctuationLowerCaseVenueName.match(noPunctuationFilter) != null)
     });
   };
 
@@ -192,9 +207,9 @@
   ////////////////
 
   var eventTitleTemplate =
-    '  <h3 class="datetime"'+
+    '  <h3 class="datetime"' +
     '      title="{{event.date | date : \'EEE, MMM d @ h:mm a\'}}">'+
-    '  <span data-ng-if="theListController.alreadyHappened(event)">already happened on </span>{{filterDate(event.date)}}</h3>' +
+    '  <span data-ng-if="theListController.alreadyHappened(event)">already happened on </span>{{eventModel.filterDate(event.date)}}</h3>' +
     '  <div style="position: relative">' +
     '    <ul class="event-artists">' +
     '      <li class="artist" data-ng-repeat="artist in event.artists">{{artist}}</li>' +
@@ -222,14 +237,22 @@
 
 
 $(function() {
-  // Sticky Header Spacer
+  // Sticky header spacer
   var headerSpacer = $('<div>');
   headerSpacer.height($('#header').outerHeight(true));
   headerSpacer.insertAfter($('#header'));
 
   // Navigation link classes
-  $("#navigation-links > li").click(function(event) {
-    $(this).siblings().removeClass("selected");
-    $(this).addClass("selected");
+  $('.selectable li').click(function(event) {
+    $(this).siblings().removeClass('selected');
+    $(this).addClass('selected');
+  });
+
+  // Dead venue button fade/toggle
+  $('#dead-venue-filters li').click(function(event) {
+    var sibling = $(this).siblings();
+    $(this).fadeOut(400, function() {
+      sibling.show();
+    });
   });
 });
