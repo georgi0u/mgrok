@@ -40,19 +40,19 @@
             <ul id="date-filters" class="selectable" >
               <li data-ng-click="theListController.showToday()" class="selected">today</li>
               <li data-ng-click="theListController.showTomorrow()">tomorrow</li>
-              <li data-ng-click="theListController.showNext()">next</li>
               <li data-ng-click="theListController.showWorkWeek()">the work week</li>
               <li data-ng-click="theListController.showWeekend()">this weekend</li>
+              <li data-ng-click="theListController.showNext()">next</li>
             </ul>
             <input type="text" id="venueFilter"
                    data-ng-model="eventModel.venueFilter"
                    data-ng-change="theListController.filterVenuesByName()"
                    placeholder="which venue?">
             <ul id="dead-venue-filters" class="selectable">
-              <li title="show the venues that don't have anything happening"
-                  data-ng-click="eventModel.showDeadVenues=true;">show dead venues</li>
               <li title="hide the venues that don't have anything happening"
-                  data-ng-click="eventModel.showDeadVenues=false;" style="display:none">hide dead venues</li>
+                  data-ng-click="eventModel.showDeadVenues=false;">hide dead venues</li>
+              <li title="show the venues that don't have anything happening"
+                  data-ng-click="eventModel.showDeadVenues=true;" style="display:none">show dead venues</li>
             </ul>
           </nav>
         </div>
