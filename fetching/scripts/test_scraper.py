@@ -16,15 +16,17 @@ SCRAPY_SPIDERS = [
     # MusicHallOfWilliamsburgSpider,
     # RoughTradeSpider,
     # TerminalFiveSpider,
-    RockwoodStageOneSpider,
+    # RockwoodStageOneSpider,
     # RockwoodStageTwoSpider,
-    RockwoodStageThreeSpider,
+    # RockwoodStageThreeSpider,
     # WebsterHallSpider,
     # TheSpaceAtWestburySpider,
     # MSGSpider,
     # TheBeaconSpider,
     # TheTheaterAtMSG,
     # RadioCity
+    #KnittingFictorySpider,
+    TheBoweryElectricSpider
     ]
 
 def get_scraped_sites_data():
@@ -40,7 +42,7 @@ def get_scraped_sites_data():
     output = RefDict()
 
     settings = Settings({
-        'LOG_ENABLED': True,
+        'LOG_ENABLED': False,
         'ITEM_PIPELINES': {
             'mgrok.pipelines.JsonWriterPipeline': 1
             },

@@ -13,6 +13,7 @@ import sys
 from mgrok.scrapers import (
     BoweryBallroomSpider,
     HighlineBallroomSpider,
+    KnittingFictorySpider,
     MSGSpider,
     MercuryLoungeSpider,
     MusicHallOfWilliamsburgSpider,
@@ -23,6 +24,7 @@ from mgrok.scrapers import (
     RoughTradeSpider,
     TerminalFiveSpider,
     TheBeaconSpider,
+    TheBoweryElectricSpider,
     TheTheaterAtMSGSpider,
     WarsawSpider,
     WebsterHallSpider,
@@ -41,6 +43,8 @@ from scrapy.settings import Settings
 SCRAPY_SPIDERS = [
     # TicketWeb
     HighlineBallroomSpider,
+    KnittingFictorySpider,
+    TheBoweryElectricSpider,
     WarsawSpider,
     WebsterHallSpider,
     # Bowery
@@ -108,7 +112,6 @@ def main():
 
     args = parser.parse_args()
 
-    # TODO add rockwood, drom
     shows = {}
 
     # Collect shows

@@ -345,16 +345,32 @@ class HighlineBallroomSpider(_TicketWebSpider):
     name = "Highline Ballroom"
     start_urls = [
         'http://www.ticketweb.com/venue/highline-ballroom-new-york-ny/19776'
-        ]
+    ]
 
 class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
     start_urls = [
         'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869'
-        ]
+    ]
 
 class WebsterHallSpider(_TicketWebSpider):
     name = "Webster Hall"
     start_urls = [
         'http://www.ticketweb.com/venue/webster-hall-new-york-ny/10015'
-        ]
+    ]
+
+class KnittingFictorySpider(_TicketWebSpider):
+    name = "Knitting Factory"
+    start_urls = [
+        'http://www.ticketweb.com/venue/' +
+        'knitting-factory-brooklyn-brooklyn-ny/221784'
+    ]
+
+class TheBoweryElectricSpider(_TicketWebSpider):
+    name = "The Bowery Electric"
+    start_urls = [
+        'http://www.ticketweb.com/venue/' +
+        'map-room-at-bowery-electric-new-york-ny/31434',
+        'http://www.ticketweb.com/venue/the-bowery-electric-new-york-ny/'
+        '97554'
+    ]
