@@ -61,7 +61,7 @@
       <ul id="list-of-venues">
         <li class="venue"
             data-ng-repeat="venueName in eventModel.filteredVenues"
-            data-ng-if="eventModel.showDeadVenues || !theListController.isVenueDead(venueName)">
+            data-ng-if="eventModel.venueFilter || eventModel.showDeadVenues || !theListController.isVenueDead(venueName)">
           <div class="venue-event-list">
             <h2>{{venueName}}</h2>
 
