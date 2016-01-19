@@ -49,7 +49,7 @@
                    data-ng-model="eventModel.venueFilter"
                    data-ng-change="theListController.filterVenuesByName()"
                    placeholder="which venue?">
-            <ul id="dead-venue-filters" class="selectable">
+            <ul id="dead-venue-filters" class="selectable" data-ng-if="!eventModel.venueFilter">
               <li title="hide the venues that don't have anything happening"
                   data-ng-click="eventModel.showDeadVenues=false;" style="display:none;">hide dead venues</li>
               <li title="show the venues that don't have anything happening"
