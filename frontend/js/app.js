@@ -29,7 +29,7 @@
     $scope['eventModel'] = this.eventModel;
 
     // Get Venue Data
-    $http.get('/js/the_raw_list.js').then(
+    $http.get("/data/the_raw_list.json").then(
       function(response) {
         // Add updated date
         self.eventModel['lastUpdated'] = response.data.updated;
