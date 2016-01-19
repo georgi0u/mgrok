@@ -3,8 +3,9 @@ A set of scrapy spider subclasses for groking event information from various
 venues.
 """
 
-import re
 from datetime import datetime, timedelta
+from functools import partial
+import re
 
 import pytz
 import scrapy
@@ -23,40 +24,41 @@ class _BoweryPresentsSpider(scrapy.Spider):
         artists = (response
                    .css('.artist-boxes .artist-name')
                    .xpath('./text()').extract())
-        date = (
+        the_date = (
             response
             .css('.event-info .times .value-title::attr(title)')
             .extract())
-        if not date:
-            date = (
+        if not the_date:
+            the_date = (
                 response
                 .css('.event-info .dates').xpath('./text()')
                 .extract()[0]
                 .strip())
-            time = (
+            the_time = (
                 response
                 .css('.event-info .times .doors').xpath('./text()')
                 .extract()[0].lstrip('Doors: '))
             timezone = pytz.timezone('America/New_York')
             the_datetime = timezone.localize(
                 datetime.strptime(
-                    date + ' ' + time,
+                    the_date + ' ' + the_time,
                     '%a, %B %d, %Y %I:%M %p'))
-            date = the_datetime.isoformat()
+            the_date = the_datetime.isoformat()
         else:
-            date = date[0]
+            the_date = the_date[0]
 
         yield {
             'event_link': response.url,
             'artists': artists,
-            'date': date,
+            'date': the_date,
             'venue_name': self.name
         }
 
 class _TicketWebSpider(scrapy.Spider):
     """Base class spider for ticketweb formatted venue websites"""
+    base_url_format = 'http://www.ticketweb.com/venue/{}'
 
-    EVENT_URL_FORMAT = (
+    event_url_format = (
         'http://www.ticketweb.com/t3/sale/SaleEventDetail'
         '?dispatch=loadSelectionData&eventId=')
 
@@ -79,7 +81,7 @@ class _TicketWebSpider(scrapy.Spider):
             # The link has angular template garbage in it, so we generate our
             # own link to the event
             match = re.search(r'eventId=(\d+)', event_link.extract())
-            full_url = response.urljoin(self.EVENT_URL_FORMAT + match.group(1))
+            full_url = response.urljoin(self.event_url_format + match.group(1))
             yield scrapy.Request(full_url, callback=self._parse_event)
 
     def _parse_event(self, response):
@@ -293,6 +295,76 @@ class _MSGSpider(scrapy.Spider):
             })
         yield {'events': events}
 
+class CityWinerySpider(scrapy.Spider):
+    """
+    Base class spider for City Winery
+    """
+    start_urls = [
+        'http://www.citywinery.com/newyork/tickets.html' +
+        '?cat=40&limit=100&p=0&view=list'
+    ]
+    name = 'City Winery'
+    def parse(self, response):
+        event_wrapper = response.css('.tickets-content.products-container dl')
+        for event in event_wrapper:
+            event_link = (
+                event
+                .css('p.addtocart a')
+                .xpath('./@href')
+                .extract()[0])
+            date_str = (
+                event
+                .css('dt')
+                .xpath('./text()')
+                .extract()[0]
+                .strip()
+            )
+
+            yield scrapy.Request(
+                event_link,
+                callback=partial(self._parse_event, date_str)
+            )
+
+        next_page_link = response.css('a.next').xpath('./@href').extract()
+        if next_page_link:
+            yield scrapy.Request(next_page_link[0], callback=self.parse)
+        else:
+            yield None
+
+    def _parse_event(self, date_str, response):
+        times = (
+            response
+            .css('.event-head .left strong')
+            .xpath('./text()')
+            .extract()
+        )
+        the_time = times[0]
+        for time in times:
+            if re.search('start', time, re.IGNORECASE):
+                the_time = time
+        the_time = re.match(r'\d+:\d+ [AaPp][Mm]', the_time).group(0)
+        the_datetime = datetime.strptime(
+            date_str + ' ' + the_time,
+            '%A, %B %d %I:%M %p')
+        now = datetime.now()
+        year = now.year
+        if the_datetime.month < now.month:
+            year += 1
+        the_datetime = the_datetime.replace(year=year)
+        timezone = pytz.timezone('America/New_York')
+        the_datetime = timezone.localize(the_datetime)
+
+        title = response.css('.event-head h1').xpath('./text()').extract()[0]
+        title_match = re.match(r'(.+)-', title)
+        if title_match:
+            title = title_match.group(1).strip()
+        yield {
+            'event_link': response.url,
+            'artists': [title],
+            'date': the_datetime.isoformat(),
+            'venue_name': self.name
+        }
+
 class MSGSpider(_MSGSpider):
     name = 'Madison Square Garden'
     start_urls = [_MSGSpider.base_url_format.format('gardens')]
@@ -344,33 +416,42 @@ class RoughTradeSpider(_BoweryPresentsSpider):
 class HighlineBallroomSpider(_TicketWebSpider):
     name = "Highline Ballroom"
     start_urls = [
-        'http://www.ticketweb.com/venue/highline-ballroom-new-york-ny/19776'
+        _TicketWebSpider.base_url_format.format(
+            'highline-ballroom-new-york-ny/19776')
     ]
 
 class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
     start_urls = [
-        'http://www.ticketweb.com/venue/warsaw-brooklyn-ny/22869'
+        _TicketWebSpider.base_url_format.format('warsaw-brooklyn-ny/22869')
     ]
 
 class WebsterHallSpider(_TicketWebSpider):
     name = "Webster Hall"
     start_urls = [
-        'http://www.ticketweb.com/venue/webster-hall-new-york-ny/10015'
+        _TicketWebSpider.base_url_format.format(
+            'webster-hall-new-york-ny/10015')
+    ]
+
+class TheStudioAtWebsterHallSpider(_TicketWebSpider):
+    name = "The Studio at Webster Hall"
+    start_urls = [
+        _TicketWebSpider.base_url_format.format(
+            'the-studio-at-webster-hall-new-york-ny/71954')
     ]
 
 class KnittingFictorySpider(_TicketWebSpider):
     name = "Knitting Factory"
     start_urls = [
-        'http://www.ticketweb.com/venue/' +
-        'knitting-factory-brooklyn-brooklyn-ny/221784'
+        _TicketWebSpider.base_url_format.format(
+            'knitting-factory-brooklyn-brooklyn-ny/221784')
     ]
 
 class TheBoweryElectricSpider(_TicketWebSpider):
     name = "The Bowery Electric"
     start_urls = [
-        'http://www.ticketweb.com/venue/' +
-        'map-room-at-bowery-electric-new-york-ny/31434',
-        'http://www.ticketweb.com/venue/the-bowery-electric-new-york-ny/'
-        '97554'
+        _TicketWebSpider.base_url_format.format(
+            'map-room-at-bowery-electric-new-york-ny/31434'),
+        _TicketWebSpider.base_url_format.format(
+            'the-bowery-electric-new-york-ny/97554')
     ]

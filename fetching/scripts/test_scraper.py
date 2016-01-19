@@ -25,8 +25,9 @@ SCRAPY_SPIDERS = [
     # TheBeaconSpider,
     # TheTheaterAtMSG,
     # RadioCity
-    #KnittingFictorySpider,
-    TheBoweryElectricSpider
+    # KnittingFictorySpider,
+    # TheBoweryElectricSpider
+    CityWinerySpider
     ]
 
 def get_scraped_sites_data():
@@ -42,7 +43,7 @@ def get_scraped_sites_data():
     output = RefDict()
 
     settings = Settings({
-        'LOG_ENABLED': False,
+        'LOG_ENABLED': True,
         'ITEM_PIPELINES': {
             'mgrok.pipelines.JsonWriterPipeline': 1
             },

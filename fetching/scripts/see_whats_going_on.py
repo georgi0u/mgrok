@@ -12,6 +12,7 @@ import sys
 
 from mgrok.scrapers import (
     BoweryBallroomSpider,
+    CityWinerySpider,
     HighlineBallroomSpider,
     KnittingFictorySpider,
     MSGSpider,
@@ -25,6 +26,7 @@ from mgrok.scrapers import (
     TerminalFiveSpider,
     TheBeaconSpider,
     TheBoweryElectricSpider,
+    TheStudioAtWebsterHallSpider,
     TheTheaterAtMSGSpider,
     WarsawSpider,
     WebsterHallSpider,
@@ -45,6 +47,7 @@ SCRAPY_SPIDERS = [
     HighlineBallroomSpider,
     KnittingFictorySpider,
     TheBoweryElectricSpider,
+    TheStudioAtWebsterHallSpider,
     WarsawSpider,
     WebsterHallSpider,
     # Bowery
@@ -62,6 +65,8 @@ SCRAPY_SPIDERS = [
     RadioCitySpider,
     TheBeaconSpider,
     TheTheaterAtMSGSpider,
+    # (Misc.)
+    CityWinerySpider,
     ]
 
 def get_scraped_sites_data():
@@ -109,7 +114,6 @@ def main():
     """
     parser = argparse.ArgumentParser(description='see whats playing in nyc.')
     parser.add_argument('outfile', type=argparse.FileType('w'))
-
     args = parser.parse_args()
 
     shows = {}
