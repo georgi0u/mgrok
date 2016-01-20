@@ -35,7 +35,6 @@
     <main id="main-container">
       <header id="header">
         <div class="header-container">
-          <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
           <h2 data-ng-if="eventModel.error">{{eventModel.error}}</h2>
           <nav data-ng-if="!eventModel.error">
             <ul id="date-filters" class="selectable" >
@@ -59,34 +58,36 @@
         </div>
       </header>
 
-      <ul id="list-of-venues">
-        <li class="venue"
-            data-ng-repeat="venueName in eventModel.filteredVenues"
-            data-ng-if="eventModel.venueFilter || eventModel.showDeadVenues || !theListController.isVenueDead(venueName)">
-          <div class="venue-event-list">
-            <h2>{{venueName}}</h2>
+      <div id="venue-list-wrapper">
+        <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
+        <ul id="list-of-venues">
+          <li class="venue"
+              data-ng-repeat="venueName in eventModel.filteredVenues"
+              data-ng-if="eventModel.venueFilter || eventModel.showDeadVenues || !theListController.isVenueDead(venueName)">
+            <div class="venue-event-list">
+              <h2>{{venueName}}</h2>
 
-            <ul class="venue-events">
-              <li class="event"
-                  data-ng-class="theListController.getEventClass(event)"
-                  data-ng-repeat="event in theListController.getEventsToShow(venueName)">
-                <a data-event-title
-                   data-ng-if="event.event_link && !theListController.alreadyHappened(event)"
-                   data-ng-href="{{event.event_link}}"
-                   target="_blank">
-                </a>
-                <div data-event-title data-ng-if="!event.event_link || theListController.alreadyHappened(event)">
-                  <p data-ng-if="!event.event_link">we couldn't find a link for this event.</p>
-                </div>
-              </li>
-              <li class="event nothing-happening"
-                  data-ng-if="theListController.getEventsToShow(venueName).length == 0">
-                nothing going on
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
+              <ul class="venue-events">
+                <li class="event"
+                    data-ng-class="theListController.getEventClass(event)"
+                    data-ng-repeat="event in theListController.getEventsToShow(venueName)">
+                  <a data-event-title
+                     data-ng-if="event.event_link && !theListController.alreadyHappened(event)"
+                     data-ng-href="{{event.event_link}}"
+                     target="_blank">
+                  </a>
+                  <div data-event-title data-ng-if="!event.event_link || theListController.alreadyHappened(event)">
+                  </div>
+                </li>
+                <li class="event nothing-happening"
+                    data-ng-if="theListController.getEventsToShow(venueName).length == 0">
+                  nothing going on
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
 
       <footer>
         <span class="updated">the list's shows were last updated on <span title={{eventModel.lastUpdated}} class="datetime">{{eventModel.lastUpdated | date : "MMM d yyyy"}}</span>, </span><br/>

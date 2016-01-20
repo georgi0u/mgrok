@@ -35,4 +35,4 @@ pip-selfcheck.json
 
 
 # Project Specific
-the_raw_list.js*
+frontend/data/**

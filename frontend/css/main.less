@@ -3,7 +3,7 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 
 /** The George List */
 main {
-  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 12pt;
   overflow-x: hidden;
 
@@ -22,8 +22,8 @@ main {
 
   header {
     margin-bottom: 35px;
-    padding-bottom: 20px;
-    padding-top: 20px;
+    padding: 20px 0;
+
     border-bottom: 1px #eee solid;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, .20);
     background: #fff;
@@ -41,14 +41,13 @@ main {
     }
 
     nav {
-      & > * {
+      #date-filters {
         padding-bottom: 15px;
       }
       li {
         display: inline-block;
         padding:0 10px 5px 10px;
         cursor: pointer;
-        border-bottom: 1px #fff solid;
         &.selected, &:active {
           color: #ff0066;
           font-weight: bold;
@@ -60,7 +59,8 @@ main {
         margin-top: -5px;
         border: 0;
         background: #eee;
-        color: #ff0066;
+        color: #000;
+        font: inherit;
       }
       #dead-venue-filters {
         display: inline-block;
@@ -69,9 +69,10 @@ main {
   }
 
   footer {
-    width: 500px;
+    width: 480px;
     margin: auto;
     text-transform: lowercase;
+    padding:0 10px;
     padding-bottom: 20px;
     font-style: italic;
     color: #aaa;
@@ -82,7 +83,7 @@ main {
     }
   }
 
-  ul#list-of-venues {
+  #venue-list-wrapper {
     margin: auto;
     max-width: 500px;
     position: relative;
@@ -90,6 +91,11 @@ main {
 
     .venue {
       padding-bottom: 40px;
+    }
+
+    h1 {
+      padding:0 10px;
+      padding-bottom: 30px;
     }
 
     h2 {
@@ -101,7 +107,6 @@ main {
     .event {
       padding:0 10px;
       margin-bottom: 5px; 
-      background: #eee;
 
       & > * {
         display: block;
@@ -109,24 +114,18 @@ main {
         padding-bottom: 12px;
       }
       &.contains_link:hover {
-        background: #ddd;
-      }
-      &.does_not_contain_link:hover .message {
-        display: block;
-      }
-      &.does_not_contain_link:hover .event-artists {
-        visibility: hidden;
+        background: #eee;
       }
       &.nothing-happening {
         font-style: italic;
         background: none;
       }
       &.past {
+        color: #ccc;
         &:hover {
           background: #eee;
           color: #ccc;
         }
-        color: #ccc;
         .datetime {
           text-decoration: line-through;
         }
