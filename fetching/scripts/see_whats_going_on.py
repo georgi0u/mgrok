@@ -34,6 +34,7 @@ from mgrok.scrapers import (
 from mgrok.ticketfly_api import (
     BrooklynBowlApi,
     CapitolTheatreApi,
+    GarciasAtTheCapitolTheatreApi,
     StVitusApi,
     )
 from dateutil.parser import parse as parse_date_str
@@ -105,6 +106,7 @@ def get_api_sites_data():
     output.update(BrooklynBowlApi().get_api_sites_data())
     output.update(CapitolTheatreApi().get_api_sites_data())
     output.update(StVitusApi().get_api_sites_data())
+    output.update(GarciasAtTheCapitolTheatreApi().get_api_sites_data())
     return output
 
 def main():

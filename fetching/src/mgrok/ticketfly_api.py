@@ -17,7 +17,7 @@ class _TicketFlyApi(object):
     days_behind = 7
     days_ahead = 3 * 31
 
-    def __init__(self, venue_id, org_id):
+    def __init__(self, venue_id, org_id=None):
         self.venue_id = venue_id
         self.org_id = org_id
 
@@ -33,11 +33,12 @@ class _TicketFlyApi(object):
         request_params = {
             'maxResults': 1000,
             'venueId': self.venue_id,
-            'orgId': self.org_id,
             'fromDate': from_date,
             'thruDate': thru_date,
             'pageNum': page_num,
             }
+        if self.org_id:
+            request_params['orgId'] = self.org_id
 
         return requests.get(list_event_endpoint, params=request_params)
 
@@ -115,6 +116,12 @@ class CapitolTheatreApi(_TicketFlyApi):
     """Fetches data for events at The Capitol Theatre"""
     def __init__(self):
         super(CapitolTheatreApi, self).__init__(4725, 767)
+
+
+class GarciasAtTheCapitolTheatreApi(_TicketFlyApi):
+    """Fetches data for events at Garcia's At The Capitol Theatre"""
+    def __init__(self):
+        super(GarciasAtTheCapitolTheatreApi, self).__init__(8211, 2703)
 
 
 class StVitusApi(_TicketFlyApi):
