@@ -76,7 +76,7 @@ class _TicketWebSpider(scrapy.Spider):
             yield page
 
     def _parse_event_list(self, response):
-        selector = '.event-list .media-body .event-name a::attr(href)'
+        selector = '.event-list .media-body .event-name a::attr(data-ng-href)'
         for event_link in response.css(selector):
             # The link has angular template garbage in it, so we generate our
             # own link to the event
