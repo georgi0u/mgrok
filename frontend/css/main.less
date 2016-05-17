@@ -20,22 +20,21 @@ main {
     color: #ff0066;
   }
 
-  header {
-    margin-bottom: 35px;
+  #controls {
     padding: 20px 0;
-
     border-bottom: 1px #eee solid;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, .20);
     background: #fff;
     position: fixed;
     width: 100%; 
     z-index: 2;
+    bottom: 0;
 
     h1 {
       padding:0 10px 15px 10px;
     }
 
-    .header-container {
+    .container {
       width: 500px;
       margin: auto;
     }
@@ -94,8 +93,7 @@ main {
     }
 
     h1 {
-      padding:0 10px;
-      padding-bottom: 30px;
+      padding: 30px 10px;
     }
 
     h2 {
@@ -108,10 +106,8 @@ main {
       padding:0 10px;
       margin-bottom: 5px; 
 
-      & > * {
-        display: block;
-        padding-top: 12px;
-        padding-bottom: 12px;
+      &.today {
+        background: #FFC7D3;
       }
       &.contains_link:hover {
         background: #eee;
@@ -129,6 +125,11 @@ main {
         .datetime {
           text-decoration: line-through;
         }
+      }
+      & > * {
+        display: block;
+        padding-top: 12px;
+        padding-bottom: 12px;
       }
       .datetime {
         font-weight: bold;

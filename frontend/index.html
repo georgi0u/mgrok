@@ -33,31 +33,6 @@
 
   <body data-ng-cloak data-ng-app="GeorgesListApp" data-ng-controller="TheListController as theListController">
     <main id="main-container">
-      <header id="header">
-        <div class="header-container">
-          <h2 data-ng-if="eventModel.error">{{eventModel.error}}</h2>
-          <nav data-ng-if="!eventModel.error">
-            <ul id="date-filters" class="selectable" >
-              <li data-ng-click="theListController.showToday()" class="selected">today</li>
-              <li data-ng-click="theListController.showTomorrow()">tomorrow</li>
-              <li data-ng-click="theListController.showWorkWeek()">the work week</li>
-              <li data-ng-click="theListController.showWeekend()">this weekend</li>
-              <li data-ng-click="theListController.showNext()">next</li>
-            </ul>
-            <input type="text" id="venueFilter"
-                   data-ng-model="eventModel.venueFilter"
-                   data-ng-change="theListController.filterVenuesByName()"
-                   placeholder="which venue?">
-            <ul id="dead-venue-filters" class="selectable" data-ng-if="!eventModel.venueFilter">
-              <li title="hide the venues that don't have anything happening"
-                  data-ng-click="eventModel.showDeadVenues=false;" style="display:none;">hide dead venues</li>
-              <li title="show the venues that don't have anything happening"
-                  data-ng-click="eventModel.showDeadVenues=true;">show dead venues</li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-
       <div id="venue-list-wrapper">
         <h1><span style='font-weight: bold;'>the george list:</span> who's playing in nyc</h1>
         <ul id="list-of-venues">
@@ -94,13 +69,30 @@
         <span class="copywrite">and its guts are maintained by <a class="homepage" target="_blank" href="http://www.adamgeorgiou.com">adam georgiou</a></span>
       </footer>
 
+      <div id="controls">
+        <div class="container">
+          <h2 data-ng-if="eventModel.error">{{eventModel.error}}</h2>
+          <nav data-ng-if="!eventModel.error">
+            <input type="text" id="venueFilter"
+                   data-ng-model="eventModel.venueFilter"
+                   data-ng-change="theListController.filterVenuesByName()"
+                   placeholder="which venue?">
+            <ul id="dead-venue-filters" class="selectable" data-ng-if="!eventModel.venueFilter">
+              <li title="hide the venues that don't have anything happening"
+                  data-ng-click="eventModel.showDeadVenues=false;" style="display:none;">hide dead venues</li>
+              <li title="show the venues that don't have anything happening"
+                  data-ng-click="eventModel.showDeadVenues=true;">show dead venues</li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+
+
     </main>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

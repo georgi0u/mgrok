@@ -57,7 +57,13 @@
             self.eventModel['eventList'] =
               self.eventModel['eventList'].concat(events);
           });
-        self.showToday(0);
+
+
+        // Show stuff for the next 7 days
+        var today = new Date();
+        var sevenDaysFromNow = new Date();
+        sevenDaysFromNow.setDate(today.getDate() + 7);
+        self.showBetweenDates(today, sevenDaysFromNow, 'EEE, MMM d @ h:mm a');
       },
       function(response) {
         self.eventModel['error'] = 'Something is messed up. Sorry.';
@@ -102,86 +108,27 @@
       };
     };
 
-  TheListController.prototype.showToday = function() {
-    var todayStart = new Date();
-    todayStart.setHours(7);
-    var todayEnd = new Date();
-    todayEnd.setDate(todayEnd.getDate() + 1);
-    todayEnd.setHours(4);
-    this.showBetweenDates(todayStart, todayEnd);
-  };
-
-  TheListController.prototype.showTomorrow = function() {
-    var tomorrowStart = new Date();
-    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-    tomorrowStart.setHours(7);
-    var tomorrowEnd = new Date();
-    tomorrowEnd.setDate(tomorrowEnd.getDate() + 2);
-    tomorrowEnd.setHours(4);
-    this.showBetweenDates(tomorrowStart, tomorrowEnd);
-  };
-
-  TheListController.prototype.showNext = function() {
-    this.venueNames.forEach(function(venueName) {
-      var events = this.eventModel['venueData'][venueName];
-      var foundNextEvent = false;
-      events.forEach(function(event) {
-        if (this.alreadyHappened(event) || foundNextEvent) {
-          event.show = false;
-        } else {
-          event.show = true;
-          foundNextEvent = true;
-        }
-      }, this);
-    }, this);
-    var self = this;
-    this.eventModel['filterDate'] = function(date) {
-      return self.$filter('date')(date, 'EEE, MMM d @ h:mm a');
-    };
-  };
-
-  TheListController.prototype.showWeekend = function() {
-    var today = zeroOutTime(new Date());
-    var daysToThursday = 4 - today.getDay();
-    var thursdayDate = new Date(today);
-    thursdayDate.setDate(today.getDate() + daysToThursday);
-    var daysToSaturday = 6 - today.getDay();
-    var sundayDate = new Date(today);
-    sundayDate.setDate(today.getDate() + daysToSaturday + 1);
-    sundayDate.setHours(23);
-    sundayDate.setMinutes(59);
-    sundayDate.setSeconds(59);
-    this.showBetweenDates(thursdayDate, sundayDate);
-  };
-
-  TheListController.prototype.showWorkWeek = function() {
-    var today = zeroOutTime(new Date());
-    var daysToMonday = 1 - today.getDay();
-    var daysToThursday = 4 - today.getDay();
-    if (today.getDay() >= 5 || today.getDay() == 0) {
-        daysToMonday += 7;
-        daysToThursday += 7;
-    }
-    var mondayDate = new Date(today);
-    mondayDate.setDate(today.getDate() + daysToMonday);
-    var thursdayDate = new Date(today);
-    thursdayDate.setDate(today.getDate() + daysToThursday);
-    thursdayDate.setHours(23);
-    thursdayDate.setMinutes(59);
-    thursdayDate.setSeconds(59);
-    this.showBetweenDates(mondayDate, thursdayDate);
-  };
-
   TheListController.prototype.getEventClass = function(event) {
     var alreadyHappened = this.alreadyHappened(event);
     var contains_link = (event.event_link && event.event_link != '');
+    var isToday = this.isToday(event.date)
 
     return {
       contains_link: contains_link,
       does_not_contain_link: !contains_link,
-      past: alreadyHappened
+      past: alreadyHappened,
+      today: isToday
     };
   };
+
+  TheListController.prototype.isToday = function(date) {
+    date = new Date(date);
+    var today = new Date();
+    return date.getYear() == today.getYear() &&
+      date.getMonth() == today.getMonth() &&
+        date.getDate() == today.getDate();
+  }
+
   
   TheListController.prototype.filterVenuesByName = function() {
     var filterStr = this.eventModel['venueFilter'];
@@ -237,11 +184,11 @@
 
 
 $(function() {
-  // Sticky header spacer
-  var headerSpacer = $('<div>');
-  headerSpacer.height($('#header').outerHeight(true));
-  headerSpacer.insertAfter($('#header'));
-
+  // Sticky controls spacer
+  var spacer = $('<div>');
+  spacer.height($('#controls').outerHeight(true));
+  spacer.insertAfter($('footer'));
+  
   // Navigation link classes
   $('.selectable li').click(function(event) {
     $(this).siblings().removeClass('selected');
