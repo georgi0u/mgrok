@@ -69,7 +69,7 @@
         self.eventModel['error'] = 'Something is messed up. Sorry.';
       });
     
-    this.eventModel['showDeadVenues'] = false;
+    this.eventModel['showDeadVenues'] = true;
   };
   
   TheListController.prototype.alreadyHappened = function(event) {
