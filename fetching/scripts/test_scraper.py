@@ -27,7 +27,8 @@ SCRAPY_SPIDERS = [
     # RadioCity
     # KnittingFictorySpider,
     # TheBoweryElectricSpider
-    CityWinerySpider
+    # CityWinerySpider
+    TheHallAtMpSpider
     ]
 
 def get_scraped_sites_data():

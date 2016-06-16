@@ -1,5 +1,5 @@
 """
-A set of scrapy spider subclasses for groking event information from various
+1;3409;0cA set of scrapy spider subclasses for groking event information from various
 venues.
 """
 
@@ -97,7 +97,7 @@ class _TicketWebSpider(scrapy.Spider):
             .xpath('./text()'))
         if not date_text:
             yield None
-        date_text = date_text[0].extract().strip()
+        date_text = ''.join(date_text.extract()).strip()
         match = re.match(
             r'^'
             r'(?P<day_of_week>\w+), '
@@ -419,6 +419,14 @@ class HighlineBallroomSpider(_TicketWebSpider):
         _TicketWebSpider.base_url_format.format(
             'highline-ballroom-new-york-ny/19776')
     ]
+
+class TheHallAtMpSpider(_TicketWebSpider):
+    name = "The Hall at MP"
+    start_urls = [
+        _TicketWebSpider.base_url_format.format(
+            'the-hall-at-mp-brooklyn-ny/421395')
+    ]
+
 
 class WarsawSpider(_TicketWebSpider):
     name = "Warsaw"
