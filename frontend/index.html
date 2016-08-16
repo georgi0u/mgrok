@@ -77,12 +77,18 @@
                    data-ng-model="eventModel.venueFilter"
                    data-ng-change="theListController.filterVenuesByName()"
                    placeholder="which venue?">
+
+            <a class="button"
+               data-ng-show="eventModel.showing == 'nextshow'"
+               data-ng-click="theListController.showNextSevenDays()">
+              show next seven days
+            </a>
+            <a class="button"
+               data-ng-show="eventModel.showing == 'nextseven'"
+               data-ng-click="theListController.showNextShow()">only show the next upcoming show</a>
           </nav>
         </div>
       </div>
-
-
-
     </main>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

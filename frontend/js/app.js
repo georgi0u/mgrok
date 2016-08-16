@@ -58,18 +58,51 @@
               self.eventModel['eventList'].concat(events);
           });
 
-
-        // Show stuff for the next 7 days
-        var today = new Date();
-        var sevenDaysFromNow = new Date();
-        sevenDaysFromNow.setDate(today.getDate() + 7);
-        self.showBetweenDates(today, sevenDaysFromNow, 'EEE, MMM d @ h:mm a');
+        // Set up a default date filter
+        self.eventModel['filterDate'] = function(date) {
+          return self.$filter('date')(date, 'EEE, MMM d @ h:mm a');
+        };
+        
+        // Show the next event for each venue
+        self.showNextShow();
       },
       function(response) {
         self.eventModel['error'] = 'Something is messed up. Sorry.';
       });
     
     this.eventModel['showDeadVenues'] = true;
+  };
+
+  TheListController.prototype.hideAllShows = function() {
+    this.eventModel['showing'] = null;
+    this.eventModel['eventList'].forEach(function(event) {
+      event.show = false;
+    });
+  };
+  
+  TheListController.prototype.showNextShow = function() {
+    this.hideAllShows();
+    this.eventModel['showing'] = 'nextshow';
+    var today = new Date();
+    angular.forEach(
+      this.eventModel['venueData'], function(events, venueName) {
+        for (i in events) {
+          var event = events[i];
+          var eventDate = new Date(event.date);
+          if (eventDate >= today) {
+            event.show = true;
+            break;
+          }
+        }});
+  };
+
+  TheListController.prototype.showNextSevenDays = function() {
+    this.hideAllShows();
+    this.eventModel['showing'] = 'nextseven';
+    var today = new Date();
+    var sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+    this.showBetweenDates(today, sevenDaysFromNow, 'EEE, MMM d @ h:mm a');
   };
   
   TheListController.prototype.alreadyHappened = function(event) {
