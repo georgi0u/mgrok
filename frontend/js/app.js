@@ -235,4 +235,6 @@ $(function() {
       sibling.show();
     });
   });
+
+  $("#venueFilter")[0].focus();
 });
